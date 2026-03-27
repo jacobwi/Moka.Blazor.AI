@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
+    <IsPackable>true</IsPackable>
+    <PackageId>Moka.Blazor.AI.Onnx</PackageId>
+    <Description>ONNX Runtime GenAI provider for Moka.Blazor.AI — run AI models fully in-process with no external server.</Description>
+    <PackageTags>blazor;ai;onnx;embedded;offline;phi;local;genai</PackageTags>
+    <NoWarn>$(NoWarn);CA1812;CA1062</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Moka.Blazor.AI\Moka.Blazor.AI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ML.OnnxRuntimeGenAI" />
+  </ItemGroup>
+
+</Project>

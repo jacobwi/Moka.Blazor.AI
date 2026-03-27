@@ -1,0 +1,1270 @@
+/* Moka.Blazor.AI — Chat Panel Styles */
+/* Uses --moka-ai-* CSS variables for theme consistency */
+
+.moka-ai-panel {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--moka-ai-color-border, #e2e4e8);
+    border-radius: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+    overflow: visible;
+    background: var(--moka-ai-bg, #fff);
+    color: var(--moka-ai-color-text, #1a1a2e);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 0 1px rgba(0,0,0,0.08);
+    margin-top: 12px;
+    position: relative;
+}
+
+.moka-ai-panel.collapsed {
+    border-radius: 12px;
+}
+
+/* ================================================================ */
+/* ---- Header ---- */
+/* ================================================================ */
+.moka-ai-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--moka-ai-toolbar-bg, #f8f9fa);
+    border-bottom: 1px solid var(--moka-ai-color-border, #e2e4e8);
+    border-radius: 12px 12px 0 0;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+}
+
+.moka-ai-header:hover {
+    background: var(--moka-ai-color-hover, rgba(0,0,0,0.03));
+}
+
+.collapsed .moka-ai-header {
+    border-bottom: none;
+    border-radius: 12px;
+}
+
+.moka-ai-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.moka-ai-title svg {
+    opacity: 0.65;
+}
+
+/* ---- Header Info Badges ---- */
+.moka-ai-context-info,
+.moka-ai-token-info {
+    font-size: 10px;
+    color: #8b8fa3;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.04);
+}
+
+.moka-ai-token-info {
+    background: rgba(14, 165, 233, 0.08);
+    color: #0284c7;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-context-info {
+    background: rgba(255,255,255,0.06);
+    color: #6b7280;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-token-info {
+    background: rgba(14, 165, 233, 0.15);
+    color: #38bdf8;
+}
+
+/* ---- Header Actions (gear + collapse) ---- */
+.moka-ai-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.moka-ai-gear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: 6px;
+    color: var(--moka-ai-color-text, #333);
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.15s, background 0.15s;
+}
+
+.moka-ai-gear:hover {
+    opacity: 1;
+    background: rgba(0,0,0,0.06);
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-gear:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+/* ---- Status Badge ---- */
+.moka-ai-status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 10px;
+    border-radius: 10px;
+    margin-left: auto;
+}
+
+.moka-ai-status.connected {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.moka-ai-status.disconnected {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.moka-ai-status.unknown {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-status.connected {
+    background: #14532d;
+    color: #86efac;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-status.disconnected {
+    background: #7f1d1d;
+    color: #fca5a5;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-status.unknown {
+    background: #374151;
+    color: #9ca3af;
+}
+
+/* ---- Retry Button ---- */
+.moka-ai-retry {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.15s, transform 0.15s;
+}
+
+.moka-ai-retry:hover {
+    opacity: 1;
+    transform: rotate(90deg);
+}
+
+/* ---- Collapse Toggle ---- */
+.moka-ai-toggle {
+    background: none;
+    border: none;
+    color: var(--moka-ai-color-text, #333);
+    cursor: pointer;
+    font-size: 10px;
+    padding: 2px 4px;
+    opacity: 0.4;
+    transition: opacity 0.15s;
+}
+
+.moka-ai-toggle:hover {
+    opacity: 1;
+}
+
+/* ================================================================ */
+/* ---- AI SETTINGS PANEL ---- */
+/* ================================================================ */
+
+.moka-ai-settings-wrapper {
+    position: relative;
+}
+
+.moka-ai-settings {
+    position: absolute;
+    right: 4px;
+    top: 0;
+    z-index: 100;
+    width: 270px;
+    background-color: #ffffff;
+    border: 1px solid #e2e4e8;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 0 1px rgba(0,0,0,0.1);
+    font-size: 12px;
+    overflow: hidden;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-settings {
+    background-color: #1e1e2e;
+    border-color: #374151;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+.moka-ai-settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 12px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e2e4e8;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-settings-header {
+    background-color: #151520;
+    border-bottom-color: #374151;
+}
+
+.moka-ai-settings-close {
+    background: none;
+    border: none;
+    color: var(--moka-ai-color-text, #333);
+    font-size: 16px;
+    cursor: pointer;
+    opacity: 0.5;
+    padding: 0 2px;
+    line-height: 1;
+}
+
+.moka-ai-settings-close:hover {
+    opacity: 1;
+}
+
+.moka-ai-settings-group {
+    padding: 8px 14px 3px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #8b8fa3;
+}
+
+.moka-ai-settings-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+}
+
+.moka-ai-settings-label {
+    font-size: 12px;
+    color: var(--moka-ai-color-text, #555);
+    min-width: 70px;
+    flex-shrink: 0;
+}
+
+.moka-ai-settings-input {
+    flex: 1;
+    padding: 5px 8px;
+    border: 1px solid var(--moka-ai-color-border, #ddd);
+    border-radius: 6px;
+    background: var(--moka-ai-bg, #fff);
+    color: var(--moka-ai-color-text, #333);
+    font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+    font-size: 11px;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.moka-ai-settings-input:focus {
+    border-color: #0ea5e9;
+}
+
+.moka-ai-settings-number {
+    width: 72px;
+    padding: 5px 6px;
+    border: 1px solid var(--moka-ai-color-border, #ddd);
+    border-radius: 6px;
+    background: var(--moka-ai-bg, #fff);
+    color: var(--moka-ai-color-text, #333);
+    font-size: 11px;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.moka-ai-settings-number:focus {
+    border-color: #0ea5e9;
+}
+
+.moka-ai-settings-unit {
+    font-size: 10px;
+    color: #8b8fa3;
+}
+
+.moka-ai-settings-slider-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.moka-ai-settings-range {
+    width: 100%;
+    height: 4px;
+    accent-color: #0ea5e9;
+    cursor: pointer;
+}
+
+.moka-ai-settings-value {
+    font-size: 10px;
+    color: #8b8fa3;
+}
+
+.moka-ai-settings-check {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--moka-ai-color-text, #555);
+    padding: 2px 0;
+}
+
+.moka-ai-settings-check input[type="checkbox"] {
+    accent-color: #0ea5e9;
+}
+
+.moka-ai-settings-select {
+    flex: 1;
+    padding: 5px 8px;
+    border: 1px solid var(--moka-ai-color-border, #ddd);
+    border-radius: 6px;
+    background: var(--moka-ai-bg, #fff);
+    color: var(--moka-ai-color-text, #333);
+    font-size: 11px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+}
+
+.moka-ai-settings-select:focus {
+    border-color: #0ea5e9;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-settings-select {
+    background: #1e1e2e;
+    color: #cdd6f4;
+    border-color: #374151;
+}
+
+/* Status dot */
+.moka-ai-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.moka-ai-status-dot.connected { background: #22c55e; }
+.moka-ai-status-dot.disconnected { background: #ef4444; }
+.moka-ai-status-dot.unknown { background: #9ca3af; }
+
+/* ================================================================ */
+/* ---- Quick Actions ---- */
+/* ================================================================ */
+.moka-ai-actions {
+    display: flex;
+    gap: 6px;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--moka-ai-color-border, #e2e4e8);
+    flex-wrap: wrap;
+    background: var(--moka-ai-toolbar-bg, #f8f9fa);
+}
+
+.moka-ai-actions button {
+    padding: 4px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid var(--moka-ai-color-border, #ddd);
+    border-radius: 14px;
+    background: var(--moka-ai-bg, #fff);
+    color: var(--moka-ai-color-text, #555);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+
+.moka-ai-actions button:hover:not(:disabled) {
+    background: #0ea5e9;
+    border-color: #0ea5e9;
+    color: #fff;
+}
+
+.moka-ai-actions button:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+/* Selection button highlight */
+.moka-ai-actions button.has-selection {
+    border-color: #0ea5e9;
+    color: #0ea5e9;
+}
+
+.moka-ai-actions button.has-selection:hover:not(:disabled) {
+    background: #0ea5e9;
+    color: #fff;
+}
+
+/* ================================================================ */
+/* ---- Messages Area ---- */
+/* ================================================================ */
+.moka-ai-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    scroll-behavior: smooth;
+}
+
+/* ---- Empty State ---- */
+.moka-ai-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    padding: 40px 32px;
+    gap: 8px;
+}
+
+.moka-ai-empty-icon {
+    opacity: 0.15;
+    margin-bottom: 4px;
+}
+
+.moka-ai-empty-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    opacity: 0.5;
+}
+
+.moka-ai-hint {
+    margin: 0;
+    font-size: 12px;
+    opacity: 0.35;
+    font-style: italic;
+}
+
+/* ================================================================ */
+/* ---- Chat Bubble Layout ---- */
+/* ================================================================ */
+.moka-ai-message {
+    display: flex;
+    gap: 10px;
+    max-width: 92%;
+    line-height: 1.55;
+    word-break: break-word;
+    position: relative;
+    animation: moka-ai-fadeIn 0.2s ease-out;
+}
+
+@keyframes moka-ai-fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.moka-ai-message.user {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.moka-ai-message.assistant {
+    align-self: flex-start;
+}
+
+.moka-ai-message.system {
+    align-self: center;
+    max-width: 95%;
+}
+
+/* ---- Avatar ---- */
+.moka-ai-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 18px;
+}
+
+.moka-ai-avatar.user {
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    color: #fff;
+}
+
+.moka-ai-avatar.assistant {
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    color: #fff;
+}
+
+.moka-ai-avatar.system {
+    background: #fee2e2;
+    color: #b91c1c;
+    width: 24px;
+    height: 24px;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-avatar.system {
+    background: #451a1a;
+    color: #fca5a5;
+}
+
+/* ---- Bubble Wrap ---- */
+.moka-ai-bubble-wrap {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+/* ---- Role Label ---- */
+.moka-ai-role-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    padding: 0 2px;
+    margin-bottom: 3px;
+}
+
+.moka-ai-message.user .moka-ai-role-label {
+    justify-content: flex-end;
+}
+
+.moka-ai-timestamp {
+    font-weight: 400;
+    font-size: 10px;
+    color: #9ca3af;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-role-label {
+    color: #9ca3af;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-timestamp {
+    color: #6b7280;
+}
+
+/* ---- Message Content Bubble ---- */
+.moka-ai-message-content {
+    overflow-wrap: break-word;
+}
+
+.moka-ai-message.user .moka-ai-message-content {
+    padding: 10px 16px;
+    border-radius: 18px 18px 4px 18px;
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    color: #fff;
+    box-shadow: 0 1px 3px rgba(14, 165, 233, 0.2);
+}
+
+.moka-ai-message.assistant .moka-ai-message-content {
+    padding: 10px 16px;
+    border-radius: 18px 18px 18px 4px;
+    background: var(--moka-ai-color-hover, #f0f2f5);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+/* System / error messages */
+.moka-ai-message.system .moka-ai-message-content {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: #fef2f2;
+    color: #b91c1c;
+    font-size: 12px;
+    border: 1px solid #fecaca;
+}
+
+.moka-ai-error-icon {
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-message.system .moka-ai-message-content {
+    background: #451a1a;
+    color: #fca5a5;
+    border-color: #7f1d1d;
+}
+
+/* ================================================================ */
+/* ---- Message Action Buttons (copy, edit) ---- */
+/* ================================================================ */
+.moka-ai-message-actions {
+    display: flex;
+    gap: 4px;
+    padding: 2px 2px 0;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.moka-ai-message:hover .moka-ai-message-actions {
+    opacity: 1;
+}
+
+.moka-ai-message.user .moka-ai-message-actions {
+    justify-content: flex-end;
+}
+
+.moka-ai-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    background: var(--moka-ai-bg, #fff);
+    border: 1px solid var(--moka-ai-color-border, #ddd);
+    border-radius: 6px;
+    color: var(--moka-ai-color-text, #666);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.moka-ai-action-btn:hover {
+    background: var(--moka-ai-color-hover, #f0f2f5);
+    border-color: #0ea5e9;
+    color: #0ea5e9;
+}
+
+.moka-ai-action-btn.copied {
+    color: #22c55e;
+    border-color: #22c55e;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-action-btn {
+    background: #1e1e2e;
+    border-color: #374151;
+    color: #9ca3af;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-action-btn:hover {
+    background: #2a2a3e;
+    border-color: #0ea5e9;
+    color: #38bdf8;
+}
+
+/* ================================================================ */
+/* ---- Edit Mode ---- */
+/* ================================================================ */
+.moka-ai-edit-area {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.moka-ai-edit-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid #0ea5e9;
+    border-radius: 12px;
+    background: var(--moka-ai-bg, #fff);
+    color: var(--moka-ai-color-text, #1a1a2e);
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.5;
+    resize: vertical;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.12);
+    min-height: 40px;
+    box-sizing: border-box;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-edit-input {
+    background: #1e1e2e;
+    color: #cdd6f4;
+    border-color: #38bdf8;
+}
+
+.moka-ai-edit-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.moka-ai-edit-save {
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    background: #0ea5e9;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-family: inherit;
+}
+
+.moka-ai-edit-save:hover:not(:disabled) {
+    background: #0284c7;
+}
+
+.moka-ai-edit-save:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.moka-ai-edit-cancel {
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid var(--moka-ai-color-border, #ddd);
+    border-radius: 8px;
+    background: var(--moka-ai-bg, #fff);
+    color: var(--moka-ai-color-text, #555);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+
+.moka-ai-edit-cancel:hover {
+    background: var(--moka-ai-color-hover, #f0f2f5);
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-edit-cancel {
+    background: #2a2a3e;
+    border-color: #374151;
+    color: #9ca3af;
+}
+
+/* ================================================================ */
+/* ---- Message Stats (tokens + duration) ---- */
+/* ================================================================ */
+.moka-ai-message-stats {
+    display: flex;
+    gap: 10px;
+    padding: 3px 2px 0;
+    font-size: 10px;
+    color: #9ca3af;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-message-stats {
+    color: #6b7280;
+}
+
+/* ---- Stopped / Cancelled Badge ---- */
+.moka-ai-stopped-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 8px;
+    margin-left: 6px;
+    border-radius: 8px;
+    background: #e5e7eb;
+    color: #6b7280;
+    vertical-align: middle;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-stopped-badge {
+    background: #374151;
+    color: #9ca3af;
+}
+
+.moka-ai-message.cancelled .moka-ai-message-content {
+    opacity: 0.7;
+}
+
+/* ================================================================ */
+/* ---- Typing Indicator (three bouncing dots) ---- */
+/* ================================================================ */
+.moka-ai-typing-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 0 4px;
+    vertical-align: middle;
+}
+
+.moka-ai-typing-indicator span {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #0ea5e9;
+    animation: moka-ai-bounce 1.2s ease-in-out infinite;
+}
+
+.moka-ai-typing-indicator span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.moka-ai-typing-indicator span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes moka-ai-bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-5px); opacity: 1; }
+}
+
+/* ================================================================ */
+/* ---- Markdown Content inside Assistant Bubbles ---- */
+/* ================================================================ */
+.moka-ai-message.assistant .moka-ai-message-content p {
+    margin: 0 0 8px 0;
+}
+
+.moka-ai-message.assistant .moka-ai-message-content p:last-child {
+    margin-bottom: 0;
+}
+
+.moka-ai-message.assistant .moka-ai-message-content h1,
+.moka-ai-message.assistant .moka-ai-message-content h2,
+.moka-ai-message.assistant .moka-ai-message-content h3,
+.moka-ai-message.assistant .moka-ai-message-content h4 {
+    margin: 12px 0 6px 0;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.moka-ai-message.assistant .moka-ai-message-content h1 { font-size: 15px; }
+.moka-ai-message.assistant .moka-ai-message-content h2 { font-size: 14px; }
+
+.moka-ai-message.assistant .moka-ai-message-content h1:first-child,
+.moka-ai-message.assistant .moka-ai-message-content h2:first-child,
+.moka-ai-message.assistant .moka-ai-message-content h3:first-child {
+    margin-top: 0;
+}
+
+/* Lists */
+.moka-ai-message.assistant .moka-ai-message-content ul,
+.moka-ai-message.assistant .moka-ai-message-content ol {
+    margin: 4px 0 8px 0;
+    padding-left: 20px;
+}
+
+.moka-ai-message.assistant .moka-ai-message-content li {
+    margin-bottom: 3px;
+}
+
+/* Tables */
+.moka-ai-message.assistant .moka-ai-message-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0;
+    font-size: 12px;
+}
+
+.moka-ai-message.assistant .moka-ai-message-content th,
+.moka-ai-message.assistant .moka-ai-message-content td {
+    border: 1px solid var(--moka-ai-color-border, #ddd);
+    padding: 4px 8px;
+    text-align: left;
+}
+
+.moka-ai-message.assistant .moka-ai-message-content th {
+    background: rgba(0,0,0,0.04);
+    font-weight: 600;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-message.assistant .moka-ai-message-content th {
+    background: rgba(255,255,255,0.06);
+}
+
+/* Inline code */
+.moka-ai-message.assistant .moka-ai-message-content code {
+    background: rgba(0,0,0,0.06);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+    font-size: 0.88em;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-message.assistant .moka-ai-message-content code {
+    background: rgba(255,255,255,0.1);
+}
+
+/* Code blocks */
+.moka-ai-message.assistant .moka-ai-message-content pre {
+    background: #1e1e2e;
+    color: #cdd6f4;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 8px 0;
+    overflow-x: auto;
+    font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.moka-ai-message.assistant .moka-ai-message-content pre code {
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    font-size: inherit;
+    color: inherit;
+}
+
+/* Blockquotes */
+.moka-ai-message.assistant .moka-ai-message-content blockquote {
+    margin: 6px 0;
+    padding: 4px 12px;
+    border-left: 3px solid #0ea5e9;
+    color: var(--moka-ai-color-text, #555);
+    opacity: 0.85;
+}
+
+/* Horizontal rules */
+.moka-ai-message.assistant .moka-ai-message-content hr {
+    border: none;
+    border-top: 1px solid var(--moka-ai-color-border, #ddd);
+    margin: 10px 0;
+}
+
+/* User message — code on blue */
+.moka-ai-message.user .moka-ai-message-content code {
+    background: rgba(255,255,255,0.2);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+    font-size: 0.88em;
+}
+
+/* ================================================================ */
+/* ---- Input Area ---- */
+/* ================================================================ */
+.moka-ai-input-area {
+    display: flex;
+    gap: 8px;
+    padding: 12px 14px;
+    border-top: 1px solid var(--moka-ai-color-border, #e2e4e8);
+    background: var(--moka-ai-toolbar-bg, #f8f9fa);
+    border-radius: 0 0 12px 12px;
+    align-items: center;
+}
+
+.moka-ai-input {
+    flex: 1;
+    padding: 9px 14px;
+    border: 1px solid var(--moka-ai-color-border, #ddd);
+    border-radius: 12px;
+    background: var(--moka-ai-bg, #fff);
+    color: var(--moka-ai-color-text, #1a1a2e);
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.5;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    resize: none;
+    min-height: 20px;
+    max-height: 120px;
+    overflow-y: auto;
+    field-sizing: content;
+}
+
+.moka-ai-input:focus {
+    border-color: #0ea5e9;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.12);
+}
+
+.moka-ai-input:disabled {
+    opacity: 0.5;
+}
+
+/* ---- Send Button ---- */
+.moka-ai-send {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.15s;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(14, 165, 233, 0.3);
+}
+
+.moka-ai-send:hover:not(:disabled) {
+    transform: scale(1.06);
+    box-shadow: 0 3px 10px rgba(14, 165, 233, 0.4);
+}
+
+.moka-ai-send:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.moka-ai-send:disabled {
+    opacity: 0.3;
+    cursor: default;
+    box-shadow: none;
+}
+
+/* ---- Stop Button ---- */
+.moka-ai-stop {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.1s;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
+    animation: moka-ai-pulse 1.5s ease-in-out infinite;
+}
+
+.moka-ai-stop:hover {
+    transform: scale(1.06);
+    animation: none;
+}
+
+.moka-ai-stop:active {
+    transform: scale(0.95);
+}
+
+@keyframes moka-ai-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Spinner */
+.moka-ai-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: moka-ai-spin 0.6s linear infinite;
+}
+
+@keyframes moka-ai-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ================================================================ */
+/* ---- Dark Theme Overrides ---- */
+/* ================================================================ */
+[data-moka-ai-theme="dark"] .moka-ai-panel {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-message.user .moka-ai-message-content {
+    background: linear-gradient(135deg, #0ea5e9, #0369a1);
+    box-shadow: 0 1px 3px rgba(14, 165, 233, 0.15);
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-message.assistant .moka-ai-message-content {
+    background: #2a2a3e;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-message.assistant .moka-ai-message-content pre {
+    background: #11111b;
+    color: #cdd6f4;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-actions button:hover:not(:disabled) {
+    background: #0ea5e9;
+    border-color: #0ea5e9;
+    color: #fff;
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-stop {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+[data-moka-ai-theme="dark"] .moka-ai-send {
+    background: linear-gradient(135deg, #0ea5e9, #0369a1);
+}
+
+/* ================================================================ */
+/* ---- CLASSIC STYLE OVERRIDES ---- */
+/* ================================================================ */
+/* Clean, flat layout — no avatars, left-aligned, subtle dividers */
+
+.style-classic .moka-ai-avatar {
+    display: none;
+}
+
+.style-classic .moka-ai-message {
+    max-width: 100%;
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--moka-ai-color-border, #eee);
+    animation: none;
+}
+
+.style-classic .moka-ai-message:last-child {
+    border-bottom: none;
+}
+
+.style-classic .moka-ai-message.user {
+    align-self: stretch;
+    flex-direction: row;
+}
+
+.style-classic .moka-ai-message.user .moka-ai-role-label {
+    justify-content: flex-start;
+}
+
+.style-classic .moka-ai-message.user .moka-ai-message-content {
+    background: var(--moka-ai-color-hover, #f0f2f5);
+    color: var(--moka-ai-color-text, #1a1a2e);
+    border-radius: 8px;
+    box-shadow: none;
+}
+
+.style-classic .moka-ai-message.assistant .moka-ai-message-content {
+    background: transparent;
+    padding: 6px 4px;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.style-classic .moka-ai-message.user .moka-ai-message-content code {
+    background: rgba(0,0,0,0.08);
+    color: inherit;
+}
+
+.style-classic .moka-ai-message-actions {
+    justify-content: flex-start;
+}
+
+.style-classic .moka-ai-message.user .moka-ai-message-actions {
+    justify-content: flex-start;
+}
+
+/* Dark theme classic overrides */
+[data-moka-ai-theme="dark"] .style-classic .moka-ai-message {
+    border-bottom-color: #2a2a3e;
+}
+
+[data-moka-ai-theme="dark"] .style-classic .moka-ai-message.user .moka-ai-message-content {
+    background: #2a2a3e;
+    color: #cdd6f4;
+}
+
+[data-moka-ai-theme="dark"] .style-classic .moka-ai-message.assistant .moka-ai-message-content {
+    background: transparent;
+}
+
+/* ================================================================ */
+/* ---- COMPACT STYLE OVERRIDES ---- */
+/* ================================================================ */
+/* Minimal spacing, no avatars, inline role labels — for small panels */
+
+.style-compact .moka-ai-avatar {
+    display: none;
+}
+
+.style-compact .moka-ai-messages {
+    padding: 8px 10px;
+    gap: 2px;
+}
+
+.style-compact .moka-ai-message {
+    max-width: 100%;
+    animation: none;
+    gap: 0;
+}
+
+.style-compact .moka-ai-message.user {
+    align-self: stretch;
+    flex-direction: row;
+}
+
+.style-compact .moka-ai-message.user .moka-ai-role-label {
+    justify-content: flex-start;
+}
+
+.style-compact .moka-ai-role-label {
+    font-size: 10px;
+    margin-bottom: 1px;
+}
+
+.style-compact .moka-ai-message.user .moka-ai-message-content {
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: var(--moka-ai-color-hover, #f0f2f5);
+    color: var(--moka-ai-color-text, #1a1a2e);
+    box-shadow: none;
+    font-size: 12px;
+}
+
+.style-compact .moka-ai-message.assistant .moka-ai-message-content {
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: transparent;
+    box-shadow: none;
+    font-size: 12px;
+}
+
+.style-compact .moka-ai-message.user .moka-ai-message-content code {
+    background: rgba(0,0,0,0.08);
+    color: inherit;
+}
+
+.style-compact .moka-ai-message-stats {
+    font-size: 9px;
+    padding: 1px 2px 0;
+}
+
+.style-compact .moka-ai-message-actions {
+    justify-content: flex-start;
+}
+
+.style-compact .moka-ai-message.user .moka-ai-message-actions {
+    justify-content: flex-start;
+}
+
+.style-compact .moka-ai-timestamp {
+    font-size: 9px;
+}
+
+/* Dark theme compact overrides */
+[data-moka-ai-theme="dark"] .style-compact .moka-ai-message.user .moka-ai-message-content {
+    background: #2a2a3e;
+    color: #cdd6f4;
+}
+
+[data-moka-ai-theme="dark"] .style-compact .moka-ai-message.assistant .moka-ai-message-content {
+    background: transparent;
+}

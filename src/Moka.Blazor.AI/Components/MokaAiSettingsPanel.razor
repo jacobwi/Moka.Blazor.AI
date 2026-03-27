@@ -1,0 +1,68 @@
+@namespace Moka.Blazor.AI.Components
+
+@if (IsVisible)
+{
+	<div class="moka-ai-settings" @onclick:stopPropagation="true">
+		<div class="moka-ai-settings-header">
+			<span>AI Settings</span>
+			<button class="moka-ai-settings-close" @onclick="OnDismiss" title="Close">&times;</button>
+		</div>
+
+		@* ── Model ── *@
+		<div class="moka-ai-settings-group">Model</div>
+
+		<div class="moka-ai-settings-row">
+			<span class="moka-ai-settings-label">Name</span>
+			<input type="text" class="moka-ai-settings-input"
+			       value="@Model" @onchange="HandleModelChange"
+			       placeholder="e.g. qwen2.5-3b" spellcheck="false"/>
+		</div>
+
+		<div class="moka-ai-settings-row">
+			<span class="moka-ai-settings-label">Status</span>
+			<span class="moka-ai-status-dot @ConnectionStatus"></span>
+			<span class="moka-ai-settings-value">@(ConnectionStatus == "connected" ? "Connected" : ConnectionStatus == "disconnected" ? "Disconnected" : "Unknown")</span>
+		</div>
+
+		@* ── Appearance ── *@
+		<div class="moka-ai-settings-group">Appearance</div>
+
+		<div class="moka-ai-settings-row">
+			<span class="moka-ai-settings-label">Chat Style</span>
+			<select class="moka-ai-settings-select" value="@ChatStyle" @onchange="HandleChatStyleChange">
+				<option value="Bubble">Bubble</option>
+				<option value="Classic">Classic</option>
+				<option value="Compact">Compact</option>
+			</select>
+		</div>
+
+		@* ── Generation ── *@
+		<div class="moka-ai-settings-group">Generation</div>
+
+		<div class="moka-ai-settings-row">
+			<span class="moka-ai-settings-label">Temperature</span>
+			<div class="moka-ai-settings-slider-wrap">
+				<input type="range" class="moka-ai-settings-range"
+				       min="0" max="2" step="0.1"
+				       value="@Temperature" @onchange="HandleTemperatureChange"/>
+				<span class="moka-ai-settings-value">@Temperature.ToString("F1") (@TemperatureLabel)</span>
+			</div>
+		</div>
+
+		<div class="moka-ai-settings-row">
+			<span class="moka-ai-settings-label">Max Context</span>
+			<input type="number" class="moka-ai-settings-number"
+			       min="500" max="100000" step="500"
+			       value="@MaxContextChars" @onchange="HandleMaxContextChange"/>
+			<span class="moka-ai-settings-unit">chars</span>
+		</div>
+
+		<div class="moka-ai-settings-row">
+			<label class="moka-ai-settings-check">
+				<input type="checkbox" checked="@StreamResponses"
+				       @onchange="@(e => StreamResponsesChanged.InvokeAsync((bool)e.Value!))"/>
+				Stream Responses
+			</label>
+		</div>
+	</div>
+}

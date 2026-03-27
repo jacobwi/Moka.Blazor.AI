@@ -1,0 +1,26 @@
+<Solution>
+  <Folder Name="/solution-items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path=".github/workflows/ci.yml" />
+    <File Path=".github/workflows/docs.yml" />
+    <File Path="mokadocs.yaml" />
+    <File Path="README.md" />
+    <File Path="CHANGELOG.md" />
+    <File Path="README.nuget.md" />
+  </Folder>
+  <Folder Name="/docs/">
+    <File Path="docs/index.md" />
+    <File Path="docs/guide/getting-started.md" />
+    <File Path="docs/guide/configuration.md" />
+    <File Path="docs/guide/theming.md" />
+    <File Path="docs/guide/extending.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Moka.Blazor.AI.Onnx/Moka.Blazor.AI.Onnx.csproj" />
+    <Project Path="src/Moka.Blazor.AI/Moka.Blazor.AI.csproj" />
+  </Folder>
+</Solution>

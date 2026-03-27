@@ -1,0 +1,280 @@
+@namespace Moka.Blazor.AI.Components
+
+<link href="_content/Moka.Blazor.AI/css/moka-ai.css" rel="stylesheet"/>
+
+<div class="moka-ai-panel @(_isCollapsed ? "collapsed" : "") @ChatStyleCssClass" data-moka-ai-theme="@ThemeAttribute">
+	<div class="moka-ai-header" @onclick="ToggleCollapse">
+		<span class="moka-ai-title">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14" fill="none"
+			     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+				<path d="M8 1.5a5 5 0 0 1 5 5v1a5 5 0 0 1-10 0v-1a5 5 0 0 1 5-5z"/>
+				<circle cx="6" cy="6.5" r="0.75" fill="currentColor" stroke="none"/>
+				<circle cx="10" cy="6.5" r="0.75" fill="currentColor" stroke="none"/>
+				<path d="M6 9.5c0 1.1.9 2 2 2s2-.9 2-2"/>
+			</svg>
+			@Title
+		</span>
+		@if (_lastContextChars > 0)
+		{
+			<span class="moka-ai-context-info" title="Context sent to model">
+				@FormatContextSize(_lastContextChars)
+			</span>
+		}
+		@if (_totalEstimatedTokens > 0)
+		{
+			<span class="moka-ai-token-info" title="Total estimated tokens in conversation">
+				@FormatTokens(_totalEstimatedTokens)
+			</span>
+		}
+		<span class="moka-ai-status @ConnectionStatus" @onclick:stopPropagation="true">
+			@_statusText
+			@if (ConnectionStatus == "disconnected")
+			{
+				<button class="moka-ai-retry" @onclick="RetryConnection" title="Retry connection">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="11" height="11"
+					     fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+						<path d="M2 8a6 6 0 0 1 10.5-4M14 8a6 6 0 0 1-10.5 4"/>
+						<path d="M12.5 1v3h-3M3.5 15v-3h3"/>
+					</svg>
+				</button>
+			}
+		</span>
+		<div class="moka-ai-header-actions" @onclick:stopPropagation="true">
+			<button class="moka-ai-gear" @onclick="ToggleSettings" title="AI Settings">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="13" height="13"
+				     fill="none" stroke="currentColor" stroke-width="1.5">
+					<circle cx="8" cy="8" r="2.5"/>
+					<path d="M8 1.5v1.2M8 13.3v1.2M1.5 8h1.2M13.3 8h1.2M3.4 3.4l.85.85M11.75 11.75l.85.85M3.4 12.6l.85-.85M11.75 4.25l.85-.85"/>
+				</svg>
+			</button>
+			<button class="moka-ai-toggle" title="@(_isCollapsed ? "Expand" : "Collapse")" @onclick="ToggleCollapse">
+				@(_isCollapsed ? "\u25B2" : "\u25BC")
+			</button>
+		</div>
+	</div>
+
+	@* Settings dropdown *@
+	<div class="moka-ai-settings-wrapper" @onclick:stopPropagation="true">
+		<MokaAiSettingsPanel IsVisible="_showSettings"
+		                     OnDismiss="DismissSettings"
+		                     Model="@CurrentModel"
+		                     ModelChanged="HandleModelChange"
+		                     Temperature="CurrentTemperature"
+		                     TemperatureChanged="HandleTemperatureChange"
+		                     MaxContextChars="CurrentMaxContext"
+		                     MaxContextCharsChanged="HandleMaxContextChange"
+		                     StreamResponses="CurrentStreamResponses"
+		                     StreamResponsesChanged="HandleStreamChange"
+		                     ChatStyle="CurrentChatStyle"
+		                     ChatStyleChanged="HandleChatStyleChange"
+		                     ConnectionStatus="@ConnectionStatus"/>
+	</div>
+
+	@if (!_isCollapsed)
+	{
+		@if (ShowQuickActions && (QuickActions is { Count: > 0 } || ActionsExtra is not null))
+		{
+			<div class="moka-ai-actions">
+				@if (QuickActions is not null)
+				{
+					@foreach (var action in QuickActions)
+					{
+						<button @onclick="@(() => SendQuickAction(action))" disabled="@IsSending"
+						        title="@(action.Tooltip ?? action.Label)">
+							@action.Label
+						</button>
+					}
+				}
+				@ActionsExtra
+				<button @onclick="ClearConversation" disabled="@IsSending" title="Clear conversation">
+					Clear
+				</button>
+			</div>
+		}
+
+		<div class="moka-ai-messages" @ref="_messagesRef" style="max-height: @MessagesHeight;">
+			@if (_messages.Count == 0)
+			{
+				<div class="moka-ai-empty">
+					<div class="moka-ai-empty-icon">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" fill="none"
+						     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<rect x="6" y="10" width="36" height="28" rx="6"/>
+							<circle cx="18" cy="23" r="2" fill="currentColor" stroke="none"/>
+							<circle cx="30" cy="23" r="2" fill="currentColor" stroke="none"/>
+							<path d="M18 31c0 3.3 2.7 6 6 6s6-2.7 6-6"/>
+							<path d="M6 18h36"/>
+						</svg>
+					</div>
+					<p class="moka-ai-empty-title">Ask me anything</p>
+					<p class="moka-ai-hint">Type a question or use the quick actions above.</p>
+				</div>
+			}
+			@for (var i = 0; i < _messages.Count; i++)
+			{
+				var msg = _messages[i];
+				var index = i;
+				<div class="moka-ai-message @msg.Role.ToString().ToLowerInvariant() @(msg.IsStreaming ? "streaming" : "") @(msg.IsCancelled ? "cancelled" : "")">
+					@* Avatar *@
+					<div class="moka-ai-avatar @msg.Role.ToString().ToLowerInvariant()">
+						@if (msg.Role == AiMessageRole.User)
+						{
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12"
+							     fill="currentColor">
+								<path d="M8 8a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zm0 1.5c-3.87 0-7 1.56-7 3.5v1h14v-1c0-1.94-3.13-3.5-7-3.5z"/>
+							</svg>
+						}
+						else if (msg.Role == AiMessageRole.Assistant)
+						{
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12"
+							     fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+								<path d="M8 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/>
+								<circle cx="6.5" cy="6" r="0.6" fill="currentColor" stroke="none"/>
+								<circle cx="9.5" cy="6" r="0.6" fill="currentColor" stroke="none"/>
+								<path d="M6.5 8.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5"/>
+								<path d="M4 13h8"/>
+							</svg>
+						}
+						else
+						{
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12"
+							     fill="currentColor">
+								<path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 10.5a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5zM8.75 8a.75.75 0 0 1-1.5 0V4.5a.75.75 0 0 1 1.5 0V8z"/>
+							</svg>
+						}
+					</div>
+
+					@* Bubble *@
+					<div class="moka-ai-bubble-wrap">
+						<div class="moka-ai-role-label">
+							@if (msg.Role == AiMessageRole.User)
+							{
+								<span>You</span>
+							}
+							else if (msg.Role == AiMessageRole.Assistant)
+							{
+								<span>Assistant</span>
+							}
+							@if (msg.Role == AiMessageRole.User && !msg.IsStreaming)
+							{
+								<span class="moka-ai-timestamp">@msg.Timestamp.ToLocalTime().ToString("h:mm tt")</span>
+							}
+							else if (msg.Role == AiMessageRole.Assistant && !msg.IsStreaming && msg.DurationMs > 0)
+							{
+								<span class="moka-ai-timestamp">@msg.Timestamp.ToLocalTime().ToString("h:mm tt")</span>
+							}
+						</div>
+
+						@if (_editingMessageIndex == index)
+						{
+							@* Edit mode *@
+							<div class="moka-ai-edit-area">
+								<textarea class="moka-ai-edit-input" @bind="_editText" @bind:event="oninput"
+								          @onkeydown="HandleEditKeyDown" rows="2"></textarea>
+								<div class="moka-ai-edit-actions">
+									<button class="moka-ai-edit-save" @onclick="SubmitEdit" title="Save & re-send"
+									        disabled="@(string.IsNullOrWhiteSpace(_editText))">
+										Save & Send
+									</button>
+									<button class="moka-ai-edit-cancel" @onclick="CancelEdit" title="Cancel editing">
+										Cancel
+									</button>
+								</div>
+							</div>
+						}
+						else
+						{
+							<div class="moka-ai-message-content">
+								@((MarkupString)FormatContent(msg.Content))
+								@if (msg.IsStreaming)
+								{
+									<span class="moka-ai-typing-indicator">
+										<span></span><span></span><span></span>
+									</span>
+								}
+								@if (msg.IsCancelled)
+								{
+									<span class="moka-ai-stopped-badge">Stopped</span>
+								}
+							</div>
+						}
+
+						@* Message action buttons *@
+						<div class="moka-ai-message-actions">
+							@if (msg.Role == AiMessageRole.User && !IsSending && _editingMessageIndex < 0)
+							{
+								<button class="moka-ai-action-btn" @onclick="@(() => StartEditMessage(index))"
+								        @onclick:stopPropagation="true" title="Edit & re-send">
+									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="11" height="11"
+									     fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M11.5 1.5l3 3L5 14H2v-3z"/>
+										<path d="M9.5 3.5l3 3"/>
+									</svg>
+								</button>
+							}
+							@if (msg.Role == AiMessageRole.Assistant && !msg.IsStreaming && !string.IsNullOrEmpty(msg.Content))
+							{
+								<button class="moka-ai-action-btn @(_copiedMessageId == msg.GetHashCode().ToString() ? "copied" : "")"
+								        @onclick="@(() => CopyMessage(msg))" @onclick:stopPropagation="true"
+								        title="Copy response">
+									@if (_copiedMessageId == msg.GetHashCode().ToString())
+									{
+										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="11" height="11"
+										     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+											<path d="M3 8.5l3 3 7-7"/>
+										</svg>
+									}
+									else
+									{
+										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="11" height="11"
+										     fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+											<rect x="5" y="5" width="8" height="8" rx="1.5"/>
+											<path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/>
+										</svg>
+									}
+								</button>
+							}
+						</div>
+
+						@* Stats row *@
+						@if (msg.Role == AiMessageRole.Assistant && !msg.IsStreaming && msg.DurationMs > 0)
+						{
+							<div class="moka-ai-message-stats">
+								<span title="Estimated tokens">@FormatTokens(msg.EstimatedTokens)</span>
+								<span title="Response time">@FormatDuration(msg.DurationMs)</span>
+							</div>
+						}
+					</div>
+				</div>
+			}
+		</div>
+
+		<div class="moka-ai-input-area">
+			<textarea class="moka-ai-input" placeholder="@Placeholder"
+			          @bind="_inputText" @bind:event="oninput"
+			          @onkeydown="HandleKeyDown"
+			          disabled="@IsSending"
+			          rows="1"></textarea>
+			@if (IsSending)
+			{
+				<button class="moka-ai-stop" @onclick="StopStreaming" title="Stop generating">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12"
+					     fill="currentColor">
+						<rect x="3" y="3" width="10" height="10" rx="1.5"/>
+					</svg>
+				</button>
+			}
+			else
+			{
+				<button class="moka-ai-send" @onclick="SendMessage"
+				        disabled="@(string.IsNullOrWhiteSpace(_inputText))"
+				        title="Send message">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14"
+					     fill="currentColor">
+						<path d="M1.5 1.2L14.8 8 1.5 14.8V9.3L10.2 8 1.5 6.7z"/>
+					</svg>
+				</button>
+			}
+		</div>
+	}
+</div>

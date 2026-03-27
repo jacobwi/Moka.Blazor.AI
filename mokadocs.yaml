@@ -1,0 +1,44 @@
+site:
+  title: "Moka.Blazor.AI"
+  description: "A reusable Blazor AI chat panel component with streaming, theming, and pluggable providers"
+  logo: icon.png
+  favicon: icon.png
+
+content:
+  docs: ./docs
+  projects:
+    - path: ./src/Moka.Blazor.AI/Moka.Blazor.AI.csproj
+      label: Core Library
+    - path: ./src/Moka.Blazor.AI.Onnx/Moka.Blazor.AI.Onnx.csproj
+      label: ONNX Provider
+
+nav:
+  - label: "Guide"
+    icon: book-open
+    expanded: true
+    children:
+      - label: "Getting Started"
+        path: "/guide/getting-started"
+      - label: "Configuration"
+        path: "/guide/configuration"
+      - label: "Theming"
+        path: "/guide/theming"
+      - label: "Extending"
+        path: "/guide/extending"
+
+theme:
+  name: default
+  options:
+    primaryColor: "#0ea5e9"
+    codeTheme: catppuccin-mocha
+    codeStyle: macos
+    showEditLink: false
+    showLastUpdated: true
+    socialLinks:
+      - icon: github
+        url: "https://github.com/jacobwi/Moka.Blazor.AI"
+      - icon: nuget
+        url: "https://www.nuget.org/packages/Moka.Blazor.AI"
+
+plugins:
+  - name: mokadocs-repl

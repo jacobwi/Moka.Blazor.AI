@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.0] - 2026-10-03
+
+### 📦 Dependencies
+| Package | From | To |
+|---|---|---|
+| Microsoft.Extensions.AI.Abstractions | 10.4.1 | 10.10.1 |
+| Microsoft.Extensions.AI.OpenAI | 10.4.1 | 10.10.1 |
+| OllamaSharp | 5.4.25 | 5.5.0 |
+| Markdig | 1.1.2 | 1.4.0 |
+| Microsoft.ML.OnnxRuntimeGenAI (Moka.Blazor.AI.Onnx) | 0.12.2 | 0.17.1 |
+
+### 🔧 Changed
+- NuGet package pages now show `README.nuget.md`, a shorter readme written for nuget.org, instead of the full GitHub README
+
 ## [0.1.0] - 2026-03-27
 
 ### ✨ New
@@ -21,4 +35,5 @@
 - Registers `OnnxRuntimeGenAIChatClient` as `IChatClient` — no external server required
 - Hardware acceleration options: CPU, CUDA, DirectML
 
+[0.2.0]: https://github.com/jacobwi/Moka.Blazor.AI/releases/tag/v0.2.0
 [0.1.0]: https://github.com/jacobwi/Moka.Blazor.AI/releases/tag/v0.1.0

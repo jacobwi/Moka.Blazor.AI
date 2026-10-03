@@ -4,10 +4,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageVersion Include="Markdig" Version="1.1.2" />
-		<PackageVersion Include="Microsoft.Extensions.AI.Abstractions" Version="10.4.1" />
-		<PackageVersion Include="Microsoft.Extensions.AI.OpenAI" Version="10.4.1" />
-		<PackageVersion Include="Microsoft.ML.OnnxRuntimeGenAI" Version="0.12.2" />
-		<PackageVersion Include="OllamaSharp" Version="5.4.25" />
+		<PackageVersion Include="Markdig" Version="1.4.0" />
+		<PackageVersion Include="Microsoft.Extensions.AI.Abstractions" Version="10.10.1" />
+		<PackageVersion Include="Microsoft.Extensions.AI.OpenAI" Version="10.10.1" />
+		<PackageVersion Include="Microsoft.ML.OnnxRuntimeGenAI" Version="0.17.1" />
+		<PackageVersion Include="OllamaSharp" Version="5.5.0" />
 	</ItemGroup>
 </Project>

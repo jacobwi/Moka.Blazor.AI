@@ -16,6 +16,7 @@ public sealed class AiChatOptionsTests
 		Assert.Equal("local-model", options.DefaultModel);
 		Assert.Null(options.SystemPrompt);
 		Assert.Equal(8000, options.MaxContextChars);
+		Assert.Equal(12000, options.MaxHistoryChars);
 		Assert.True(options.StreamResponses);
 		Assert.Equal(0.3f, options.Temperature);
 	}

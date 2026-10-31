@@ -132,6 +132,7 @@ public sealed class AiChatService(
 		DefaultModel = source.DefaultModel,
 		SystemPrompt = source.SystemPrompt,
 		MaxContextChars = source.MaxContextChars,
+		MaxHistoryChars = source.MaxHistoryChars,
 		StreamResponses = source.StreamResponses,
 		Temperature = source.Temperature
 	};
@@ -147,19 +148,23 @@ public sealed class AiChatService(
 			? systemPrompt
 			: $"{systemPrompt}\n\n---\nContext:\n{context}";
 
+		// Trim history to the configured budget (system entries never take part)
+		List<AiMessage> conversation = history.Where(m => m.Role != AiMessageRole.System).ToList();
+		bool truncated;
+		List<AiMessage> selected = TrimHistory(conversation, out truncated);
+
+		if (truncated)
+		{
+			fullSystemPrompt += "\n\n[Note: earlier conversation history was truncated to fit the context window.]";
+		}
+
 		var messages = new List<ChatMessage>
 		{
 			new(ChatRole.System, fullSystemPrompt)
 		};
 
-		// Add conversation history (skip system messages)
-		foreach (AiMessage msg in history)
+		foreach (AiMessage msg in selected)
 		{
-			if (msg.Role == AiMessageRole.System)
-			{
-				continue;
-			}
-
 			ChatRole role = msg.Role == AiMessageRole.User ? ChatRole.User : ChatRole.Assistant;
 			messages.Add(new ChatMessage(role, msg.Content));
 		}
@@ -167,5 +172,52 @@ public sealed class AiChatService(
 		messages.Add(new ChatMessage(ChatRole.User, userMessage));
 
 		return messages;
+	}
+
+	/// <summary>
+	///     Drops the oldest history messages until the total content fits within
+	///     <see cref="AiChatOptions.MaxHistoryChars" />. Always keeps at least one
+	///     message, and re-aligns so the kept history starts with a user message.
+	/// </summary>
+	private List<AiMessage> TrimHistory(List<AiMessage> conversation, out bool truncated)
+	{
+		truncated = false;
+
+		int budget = Options.MaxHistoryChars;
+		if (budget <= 0 || conversation.Count <= 1)
+		{
+			return conversation;
+		}
+
+		int total = 0;
+		foreach (AiMessage msg in conversation)
+		{
+			total += msg.Content.Length;
+		}
+
+		if (total <= budget)
+		{
+			return conversation;
+		}
+
+		truncated = true;
+
+		int start = 0;
+		while (total > budget && start < conversation.Count - 1)
+		{
+			total -= conversation[start].Content.Length;
+			start++;
+		}
+
+		List<AiMessage> selected = conversation[start..];
+
+		// Some providers expect the history after the system message to open with
+		// a user turn — drop a leading assistant message left behind by trimming.
+		if (selected.Count > 1 && selected[0].Role == AiMessageRole.Assistant)
+		{
+			selected = selected[1..];
+		}
+
+		return selected;
 	}
 }

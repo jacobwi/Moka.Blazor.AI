@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0] - 2026-10-30
+
+### ✨ New
+- **History trimming** — new `AiChatOptions.MaxHistoryChars` (default 12000 chars, `0` disables) caps how much conversation history is sent. Oldest messages are dropped first, the kept history is re-aligned to start on a user turn, and a truncation note is added to the system prompt so the model knows earlier context was cut. Long conversations no longer grow the prompt unbounded until the provider's context window overflows
+
+### 🐛 Fixed
+- `AiChatService`'s per-instance options snapshot now copies `MaxHistoryChars` (and the test suite locks the snapshot contract so new option fields can't be silently missed)
+
 ## [0.3.0] - 2026-10-30
 
 ### 💥 Breaking Changes
@@ -52,6 +60,7 @@
 - Registers `OnnxRuntimeGenAIChatClient` as `IChatClient` — no external server required
 - Hardware acceleration options: CPU, CUDA, DirectML
 
+[0.4.0]: https://github.com/jacobwi/Moka.Blazor.AI/releases/tag/v0.4.0
 [0.3.0]: https://github.com/jacobwi/Moka.Blazor.AI/releases/tag/v0.3.0
 [0.2.0]: https://github.com/jacobwi/Moka.Blazor.AI/releases/tag/v0.2.0
 [0.1.0]: https://github.com/jacobwi/Moka.Blazor.AI/releases/tag/v0.1.0

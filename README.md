@@ -22,6 +22,7 @@ A reusable Blazor AI chat panel component with streaming responses, editable mes
 - **Markdown rendering** — assistant responses rendered as Markdown via Markdig
 - **Settings panel** — model, temperature, max context, streaming toggle, chat style
 - **Token tracking** — estimated token count and context window usage
+- **History trimming** — long conversations automatically drop oldest messages to stay within `MaxHistoryChars`
 - **Connection status** — auto-detect backend availability with retry
 - **Theming** — light, dark, and auto modes via CSS variables
 - **Pluggable providers** — OpenAI-compatible, Ollama, ONNX Runtime, or any custom `IChatClient`

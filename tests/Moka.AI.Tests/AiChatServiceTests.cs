@@ -129,21 +129,25 @@ public sealed class AiChatServiceTests
 		serviceA.SetModel("model-a");
 		serviceA.SetMaxContextChars(1234);
 		serviceA.SetStreamResponses(false);
+		serviceA.Options.MaxHistoryChars = 500;
 
 		Assert.Equal(1.5f, serviceA.Options.Temperature);
 		Assert.Equal("model-a", serviceA.Options.DefaultModel);
 		Assert.Equal(1234, serviceA.Options.MaxContextChars);
+		Assert.Equal(500, serviceA.Options.MaxHistoryChars);
 		Assert.False(serviceA.Options.StreamResponses);
 
 		// The other instance sees the configured defaults, never A's changes
 		Assert.Equal(0.3f, serviceB.Options.Temperature);
 		Assert.Equal("local-model", serviceB.Options.DefaultModel);
 		Assert.Equal(8000, serviceB.Options.MaxContextChars);
+		Assert.Equal(12000, serviceB.Options.MaxHistoryChars);
 		Assert.True(serviceB.Options.StreamResponses);
 
 		// The configured options singleton itself is never mutated
 		Assert.Equal(0.3f, source.Value.Temperature);
 		Assert.Equal("local-model", source.Value.DefaultModel);
+		Assert.Equal(12000, source.Value.MaxHistoryChars);
 	}
 
 	[Fact]
@@ -185,6 +189,107 @@ public sealed class AiChatServiceTests
 		var service = CreateService(client, contextBuilder: new StubContextBuilder("ctx-data"));
 
 		Assert.Equal("ctx-data", service.BuildContext());
+	}
+
+	[Fact]
+	public async Task SendAsync_TrimsOldestHistory_WhenOverBudget()
+	{
+		using var client = new FakeChatClient();
+		var service = CreateService(client, new AiChatOptions { MaxHistoryChars = 10 });
+		var history = new List<AiMessage>
+		{
+			new() { Role = AiMessageRole.User, Content = "0123456789" }, // 10 chars — alone fills the budget
+			new() { Role = AiMessageRole.User, Content = "b" },
+			new() { Role = AiMessageRole.Assistant, Content = "a" }
+		};
+
+		await service.SendAsync("q", "sys", history);
+
+		List<ChatMessage> sent = Assert.Single(client.Requests);
+		Assert.Equal(4, sent.Count); // system + 2 kept history + current
+		Assert.Equal("b", sent[1].Text);
+		Assert.Equal("a", sent[2].Text);
+		Assert.Contains("truncated", sent[0].Text);
+	}
+
+	[Fact]
+	public async Task SendAsync_KeepsFullHistory_WhenUnderBudget()
+	{
+		using var client = new FakeChatClient();
+		var service = CreateService(client, new AiChatOptions { MaxHistoryChars = 1000 });
+		var history = new List<AiMessage>
+		{
+			new() { Role = AiMessageRole.User, Content = "q1" },
+			new() { Role = AiMessageRole.Assistant, Content = "a1" }
+		};
+
+		await service.SendAsync("q2", "sys", history);
+
+		List<ChatMessage> sent = Assert.Single(client.Requests);
+		Assert.Equal(4, sent.Count);
+		Assert.DoesNotContain("truncated", sent[0].Text);
+	}
+
+	[Fact]
+	public async Task SendAsync_TrimsToUserFirstAlignment()
+	{
+		using var client = new FakeChatClient();
+		// Budget 6: drops the first user msg (total 8 -> 6), leaving an assistant
+		// message first — the aligner must skip it so history opens with a user turn.
+		var service = CreateService(client, new AiChatOptions { MaxHistoryChars = 6 });
+		var history = new List<AiMessage>
+		{
+			new() { Role = AiMessageRole.User, Content = "u1" },
+			new() { Role = AiMessageRole.Assistant, Content = "a1" },
+			new() { Role = AiMessageRole.User, Content = "u2" },
+			new() { Role = AiMessageRole.Assistant, Content = "a2" }
+		};
+
+		await service.SendAsync("q", "sys", history);
+
+		List<ChatMessage> sent = Assert.Single(client.Requests);
+		// system + [u2, a2] + current — the leading a1 was aligned away
+		Assert.Equal(4, sent.Count);
+		Assert.Equal(ChatRole.User, sent[1].Role);
+		Assert.Equal("u2", sent[1].Text);
+		Assert.Equal("a2", sent[2].Text);
+	}
+
+	[Fact]
+	public async Task SendAsync_KeepsSingleOversizedHistoryMessage()
+	{
+		using var client = new FakeChatClient();
+		var service = CreateService(client, new AiChatOptions { MaxHistoryChars = 5 });
+		var history = new List<AiMessage>
+		{
+			new() { Role = AiMessageRole.User, Content = "0123456789" }
+		};
+
+		await service.SendAsync("q", "sys", history);
+
+		// Never drops the last remaining history message, even when it alone exceeds the budget
+		List<ChatMessage> sent = Assert.Single(client.Requests);
+		Assert.Equal(3, sent.Count);
+		Assert.Equal("0123456789", sent[1].Text);
+	}
+
+	[Fact]
+	public async Task SendAsync_DisabledBudget_KeepsAllHistory()
+	{
+		using var client = new FakeChatClient();
+		var service = CreateService(client, new AiChatOptions { MaxHistoryChars = 0 });
+		var history = new List<AiMessage>
+		{
+			new() { Role = AiMessageRole.User, Content = new string('x', 5000) },
+			new() { Role = AiMessageRole.Assistant, Content = new string('y', 5000) },
+			new() { Role = AiMessageRole.User, Content = new string('z', 5000) }
+		};
+
+		await service.SendAsync("q", "sys", history);
+
+		List<ChatMessage> sent = Assert.Single(client.Requests);
+		Assert.Equal(5, sent.Count); // system + all 3 history + current
+		Assert.DoesNotContain("truncated", sent[0].Text);
 	}
 
 	private sealed class StubContextBuilder(string context) : IAiContextBuilder

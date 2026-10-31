@@ -27,6 +27,14 @@ public sealed class AiChatOptions
 	/// <summary>Maximum characters of context to include in the prompt. Default is 8000 (~2K tokens).</summary>
 	public int MaxContextChars { get; set; } = 8000;
 
+	/// <summary>
+	///     Maximum characters of conversation history to include in the prompt.
+	///     When exceeded, the oldest messages are dropped first and a truncation note
+	///     is added to the system prompt. Default is 12000 (~3K tokens). Set to 0 to
+	///     disable the limit.
+	/// </summary>
+	public int MaxHistoryChars { get; set; } = 12000;
+
 	/// <summary>Whether to stream responses token-by-token. Default is <c>true</c>.</summary>
 	public bool StreamResponses { get; set; } = true;
 

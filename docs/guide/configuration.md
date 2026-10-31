@@ -28,6 +28,7 @@ builder.Services.AddMokaAi(options =>
 | `DefaultModel` | `string?` | `"local-model"` | Model name to use |
 | `Temperature` | `float` | `0.3` | Response randomness (0.0 = deterministic, 1.0 = creative) |
 | `MaxContextChars` | `int` | `8000` | Maximum characters included as context |
+| `MaxHistoryChars` | `int` | `12000` | Maximum characters of conversation history sent (oldest dropped first; `0` disables) |
 | `StreamResponses` | `bool` | `true` | Enable token-by-token streaming |
 | `SystemPrompt` | `string?` | `null` | Default system prompt |
 

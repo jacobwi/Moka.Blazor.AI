@@ -27,4 +27,7 @@
   <Folder Name="/samples/">
     <Project Path="samples/Moka.AI.ConsoleDemo/Moka.AI.ConsoleDemo.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Moka.AI.Tests/Moka.AI.Tests.csproj" />
+  </Folder>
 </Solution>

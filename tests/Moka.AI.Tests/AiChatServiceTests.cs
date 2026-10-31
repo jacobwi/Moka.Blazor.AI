@@ -292,6 +292,92 @@ public sealed class AiChatServiceTests
 		Assert.DoesNotContain("truncated", sent[0].Text);
 	}
 
+	// ── Tool calling ──
+
+	[Fact]
+	public async Task SendAsync_PassesRegisteredTools()
+	{
+		using var client = new FakeChatClient();
+		AIFunction tool = AIFunctionFactory.Create((int a, int b) => a + b,
+			new AIFunctionFactoryOptions { Name = "add" });
+		var service = CreateService(client, new AiChatOptions());
+		service.Options.Tools.Add(tool);
+
+		await service.SendAsync("q", "sys", []);
+
+		ChatOptions? options = Assert.Single(client.OptionsRequests);
+		Assert.NotNull(options);
+		Assert.NotNull(options.Tools);
+		Assert.Contains(tool, options.Tools);
+	}
+
+	[Fact]
+	public async Task SendAsync_NoToolsRegistered_SendsEmptyToolList()
+	{
+		using var client = new FakeChatClient();
+		var service = CreateService(client);
+
+		await service.SendAsync("q", "sys", []);
+
+		ChatOptions? options = Assert.Single(client.OptionsRequests);
+		Assert.NotNull(options);
+		Assert.True(options.Tools is null or { Count: 0 });
+	}
+
+	[Fact]
+	public async Task SendAsync_ExecutesToolCallLoop_EndToEnd()
+	{
+		using var client = new FakeChatClient();
+
+		int? toolResult = null;
+		AIFunction addTool = AIFunctionFactory.Create(
+			(int a, int b) => toolResult = a + b,
+			new AIFunctionFactoryOptions { Name = "add", Description = "Add two integers." });
+
+		// Script: first the model asks to call add(2, 3); after the result round-trips
+		// it answers with the sum.
+		client.ScriptedResponses = new Queue<ChatResponse>(
+		[
+			new ChatResponse(new ChatMessage(ChatRole.Assistant,
+				[new FunctionCallContent("call-1", "add",
+					new Dictionary<string, object?> { ["a"] = 2, ["b"] = 3 })])),
+			new ChatResponse(new ChatMessage(ChatRole.Assistant, "The sum is 5."))
+		]);
+
+		var service = CreateService(client, new AiChatOptions());
+		service.Options.Tools.Add(addTool);
+
+		string response = await service.SendAsync("What is 2 + 3?", "sys", []);
+
+		Assert.Equal(2, client.Requests.Count);
+
+		// The second request must carry the tool result back to the model
+		List<ChatMessage> second = client.Requests[1];
+		FunctionResultContent resultContent = second
+			.SelectMany(m => m.Contents)
+			.OfType<FunctionResultContent>()
+			.Single();
+		Assert.True(resultContent.Exception is null, resultContent.Exception?.ToString());
+		Assert.Equal("The sum is 5.", response);
+		Assert.Equal(5, toolResult);
+	}
+
+	[Fact]
+	public void Tools_AreSharedBetweenServiceInstances()
+	{
+		using var client = new FakeChatClient();
+		var source = Options.Create(new AiChatOptions());
+		var serviceA = new AiChatService(client, source);
+		var serviceB = new AiChatService(client, source);
+
+		AIFunction tool = AIFunctionFactory.Create((int a, int b) => a + b,
+			new AIFunctionFactoryOptions { Name = "add" });
+		serviceA.Options.Tools.Add(tool);
+
+		// App-level state: B sees tools registered through A after construction
+		Assert.Contains(tool, serviceB.Options.Tools);
+	}
+
 	private sealed class StubContextBuilder(string context) : IAiContextBuilder
 	{
 		public string BuildContext(AiChatOptions options) => context;

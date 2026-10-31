@@ -13,6 +13,8 @@ content:
       label: Blazor Components
     - path: ./src/Moka.AI.Onnx/Moka.AI.Onnx.csproj
       label: ONNX Provider
+    - path: ./src/Moka.AI.Mcp/Moka.AI.Mcp.csproj
+      label: MCP Client
 
 nav:
   - label: "Guide"
@@ -25,6 +27,8 @@ nav:
         path: "/guide/configuration"
       - label: "Theming"
         path: "/guide/theming"
+      - label: "MCP & Tool Calling"
+        path: "/guide/mcp"
       - label: "Extending"
         path: "/guide/extending"
 

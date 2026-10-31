@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.0] - 2026-10-31
+
+### ✨ New
+- **Tool calling** — `AiChatOptions.Tools` registers `AITool`/`AIFunction` tools (via `AIFunctionFactory.Create`). Tools are sent with every request and the model's calls execute automatically: the chat client is wrapped with `FunctionInvokingChatClient` when `EnableFunctionInvocation` is true (default; set false to bring your own pipeline). Works with both `SendAsync` and `StreamAsync`
+- **New package: `Moka.AI.Mcp`** — Model Context Protocol client integration on the official `ModelContextProtocol` 2.x SDK. `AddMokaAiMcp(...)` registers stdio (`npx`-style processes) and HTTP MCP servers; `MokaAiMcpClient.ConnectAsync()` connects during startup, discovers each server's tools, and registers them with the AI pipeline. MCP tools are `McpClientTool`s, which derive from `AIFunction` — zero conversion needed
+
+### 🔧 Changed
+- `AiChatOptions.Tools` is app-level shared state by design: the per-instance options snapshot shares the list reference, so tools registered after a service is constructed (e.g. an MCP server connecting post-startup) are visible to every `AiChatService`
+
 ## [0.4.0] - 2026-10-30
 
 ### ✨ New
@@ -60,6 +69,7 @@
 - Registers `OnnxRuntimeGenAIChatClient` as `IChatClient` — no external server required
 - Hardware acceleration options: CPU, CUDA, DirectML
 
+[0.5.0]: https://github.com/jacobwi/Moka.Blazor.AI/releases/tag/v0.5.0
 [0.4.0]: https://github.com/jacobwi/Moka.Blazor.AI/releases/tag/v0.4.0
 [0.3.0]: https://github.com/jacobwi/Moka.Blazor.AI/releases/tag/v0.3.0
 [0.2.0]: https://github.com/jacobwi/Moka.Blazor.AI/releases/tag/v0.2.0

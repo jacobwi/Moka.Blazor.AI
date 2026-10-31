@@ -16,10 +16,20 @@ public sealed class AiChatService(
 	IAiContextBuilder? contextBuilder = null)
 {
 	/// <summary>
+	///     The client used for requests, wrapped with <see cref="FunctionInvokingChatClient" />
+	///     when tool invocation is enabled so the model's tool calls execute automatically.
+	/// </summary>
+	private readonly IChatClient _client = options.Value.EnableFunctionInvocation
+		? new FunctionInvokingChatClient(chatClient)
+		: chatClient;
+
+	/// <summary>
 	///     The current AI options. This is a per-instance snapshot of the configured
 	///     <see cref="AiChatOptions" /> — runtime changes made via the <c>Set*</c> methods
 	///     affect only this service instance (and therefore only the current scope),
-	///     never other scopes or users.
+	///     never other scopes or users. The <see cref="AiChatOptions.Tools" /> list is the
+	///     one exception: it is shared app-level state so tools registered later (e.g. an
+	///     MCP server connecting after startup) reach every service instance.
 	/// </summary>
 	public AiChatOptions Options { get; } = Snapshot(options.Value);
 
@@ -56,13 +66,9 @@ public sealed class AiChatService(
 	{
 		List<ChatMessage> messages = BuildMessages(userMessage, systemPrompt, history);
 
-		var options = new ChatOptions
-		{
-			Temperature = Options.Temperature,
-			ModelId = Options.DefaultModel
-		};
+		ChatOptions options = BuildRequestOptions();
 
-		ChatResponse response = await chatClient.GetResponseAsync(
+		ChatResponse response = await _client.GetResponseAsync(
 			messages,
 			options,
 			cancellationToken);
@@ -81,13 +87,9 @@ public sealed class AiChatService(
 	{
 		List<ChatMessage> messages = BuildMessages(userMessage, systemPrompt, history);
 
-		var options = new ChatOptions
-		{
-			Temperature = Options.Temperature,
-			ModelId = Options.DefaultModel
-		};
+		ChatOptions options = BuildRequestOptions();
 
-		await foreach (ChatResponseUpdate update in chatClient.GetStreamingResponseAsync(
+		await foreach (ChatResponseUpdate update in _client.GetStreamingResponseAsync(
 			               messages, options, cancellationToken))
 		{
 			if (update.Text is not null)
@@ -105,7 +107,7 @@ public sealed class AiChatService(
 	{
 		try
 		{
-			await chatClient.GetResponseAsync(
+			await _client.GetResponseAsync(
 				[new ChatMessage(ChatRole.User, "Say 'ok'")],
 				new ChatOptions { Temperature = 0, MaxOutputTokens = 5 },
 				cancellationToken);
@@ -124,6 +126,22 @@ public sealed class AiChatService(
 	/// </summary>
 	public string BuildContext() => contextBuilder?.BuildContext(Options) ?? "";
 
+	private ChatOptions BuildRequestOptions()
+	{
+		var options = new ChatOptions
+		{
+			Temperature = Options.Temperature,
+			ModelId = Options.DefaultModel
+		};
+
+		if (Options.Tools.Count > 0)
+		{
+			options.Tools = Options.Tools;
+		}
+
+		return options;
+	}
+
 	private static AiChatOptions Snapshot(AiChatOptions source) => new()
 	{
 		Provider = source.Provider,
@@ -134,7 +152,11 @@ public sealed class AiChatService(
 		MaxContextChars = source.MaxContextChars,
 		MaxHistoryChars = source.MaxHistoryChars,
 		StreamResponses = source.StreamResponses,
-		Temperature = source.Temperature
+		Temperature = source.Temperature,
+		EnableFunctionInvocation = source.EnableFunctionInvocation,
+		// Shared by reference: tools registered after a service snapshot (e.g. an MCP
+		// server connecting post-startup) must be visible to every instance.
+		Tools = source.Tools
 	};
 
 	private List<ChatMessage> BuildMessages(

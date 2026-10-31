@@ -17,9 +17,11 @@
     <File Path="docs/guide/getting-started.md" />
     <File Path="docs/guide/configuration.md" />
     <File Path="docs/guide/theming.md" />
+    <File Path="docs/guide/mcp.md" />
     <File Path="docs/guide/extending.md" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src/Moka.AI.Mcp/Moka.AI.Mcp.csproj" />
     <Project Path="src/Moka.AI.Onnx/Moka.AI.Onnx.csproj" />
     <Project Path="src/Moka.AI/Moka.AI.csproj" />
     <Project Path="src/Moka.Blazor.AI/Moka.Blazor.AI.csproj" />

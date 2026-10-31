@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.AI;
+
 namespace Moka.AI.Models;
 
 /// <summary>
@@ -40,6 +43,24 @@ public sealed class AiChatOptions
 
 	/// <summary>Generation temperature (0.0 = deterministic, 2.0 = very creative). Default is 0.3.</summary>
 	public float Temperature { get; set; } = 0.3f;
+
+	/// <summary>
+	///     Whether to wrap the chat client with <c>FunctionInvokingChatClient</c> so the model's
+	///     tool/function calls are executed automatically in a request loop. Only relevant when
+	///     <see cref="Tools" /> is non-empty. Set to <c>false</c> if you provide your own
+	///     function-invoking pipeline. Default is <c>true</c>.
+	/// </summary>
+	public bool EnableFunctionInvocation { get; set; } = true;
+
+	/// <summary>
+	///     Tools/functions available to the model. Register via <see cref="AIFunctionFactory.Create" />,
+	///     any <see cref="AITool" />, or an MCP client's tool functions. Empty (default) = tool
+	///     calling disabled. This list is app-level configuration and is shared between service
+	///     instances (unlike per-scope runtime settings such as model or temperature).
+	/// </summary>
+	[SuppressMessage("Usage", "CA2227:Collection properties should be read only",
+		Justification = "Settable so per-instance option snapshots can share the app-level list reference.")]
+	public IList<AITool> Tools { get; set; } = [];
 
 	/// <summary>Resolved endpoint URL with provider-specific defaults.</summary>
 	public string ResolvedEndpoint => Endpoint ?? Provider switch

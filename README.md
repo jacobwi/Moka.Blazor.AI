@@ -36,6 +36,7 @@ A reusable Blazor AI chat panel component with streaming responses, editable mes
 | [Moka.AI](https://www.nuget.org/packages/Moka.AI) | Core AI chat services — UI-free, works in any .NET app |
 | [Moka.Blazor.AI](https://www.nuget.org/packages/Moka.Blazor.AI) | Blazor chat panel component (built on Moka.AI) |
 | [Moka.AI.Onnx](https://www.nuget.org/packages/Moka.AI.Onnx) | ONNX Runtime GenAI provider for embedded/offline models |
+| [Moka.AI.Mcp](https://www.nuget.org/packages/Moka.AI.Mcp) | Model Context Protocol client — expose MCP server tools to the AI |
 
 ## Installation
 
@@ -110,6 +111,39 @@ builder.Services.AddMokaAiOnnx(@"C:\models\phi-3-mini-onnx");
 ```csharp
 builder.Services.AddMokaAi(myCustomChatClient);
 ```
+
+## Tool Calling & MCP
+
+Register tools on `AiChatOptions.Tools` — the model's tool calls execute automatically via `FunctionInvokingChatClient`:
+
+```csharp
+builder.Services.AddMokaAi(options =>
+{
+    options.DefaultModel = "qwen2.5-3b";
+    options.Tools.Add(AIFunctionFactory.Create(
+        (string city) => WeatherLookup(city),
+        new AIFunctionFactoryOptions { Name = "get_weather", Description = "Get the current weather for a city." }));
+});
+```
+
+Or connect [Model Context Protocol](https://modelcontextprotocol.io) servers with **Moka.AI.Mcp** and expose all their tools to the AI:
+
+```bash
+dotnet add package Moka.AI.Mcp
+```
+
+```csharp
+// Program.cs
+builder.Services.AddMokaAi(options => { /* provider config */ });
+builder.Services.AddMokaAiMcp(mcp => mcp
+    .AddStdioServer("filesystem", "npx", "-y", "@modelcontextprotocol/server-filesystem", @"C:\data")
+    .AddHttpServer("github", new Uri("http://localhost:7801/mcp")));
+
+// after building the app, before the first chat request:
+await app.Services.GetRequiredService<MokaAiMcpClient>().ConnectAsync();
+```
+
+The connected servers' tools are discovered and registered automatically — the AI can call them like any other function.
 
 ## Using Without Blazor
 
@@ -228,6 +262,10 @@ src/
   Moka.AI.Onnx/                # ONNX Runtime GenAI provider (depends on Moka.AI)
     Extensions/                 # AddMokaAiOnnx() DI registration
     Models/                     # OnnxAiOptions
+  Moka.AI.Mcp/                 # Model Context Protocol client (depends on Moka.AI)
+    MokaAiMcpClient.cs          # Connect servers, register tools
+    Extensions/                 # AddMokaAiMcp() DI registration
+    Models/                     # MokaAiMcpOptions, McpServerDefinition
 samples/
   Moka.AI.ConsoleDemo/         # Console app demonstrating headless usage
 docs/                           # MokaDocs documentation site

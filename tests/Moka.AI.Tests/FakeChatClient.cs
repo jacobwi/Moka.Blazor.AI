@@ -17,6 +17,12 @@ internal sealed class FakeChatClient : IChatClient
 
 	public bool ThrowOnRequest { get; set; }
 
+	/// <summary>
+	///     When set, <see cref="GetResponseAsync" /> dequeues scripted responses in order
+	///     instead of returning <see cref="ResponseText" /> — used to simulate tool-call loops.
+	/// </summary>
+	public Queue<ChatResponse>? ScriptedResponses { get; set; }
+
 	public Task<ChatResponse> GetResponseAsync(
 		IEnumerable<ChatMessage> messages,
 		ChatOptions? options = null,
@@ -29,7 +35,9 @@ internal sealed class FakeChatClient : IChatClient
 			throw new InvalidOperationException("simulated backend failure");
 		}
 
-		return Task.FromResult(new ChatResponse(new ChatMessage(ChatRole.Assistant, ResponseText)));
+		return Task.FromResult(ScriptedResponses is { Count: > 0 }
+			? ScriptedResponses.Dequeue()
+			: new ChatResponse(new ChatMessage(ChatRole.Assistant, ResponseText)));
 	}
 
 	public async IAsyncEnumerable<ChatResponseUpdate> GetStreamingResponseAsync(

@@ -10,6 +10,8 @@ A reusable Blazor AI chat panel component with streaming responses, editable mes
 - **Quick actions** — configurable prompt buttons for common tasks
 - **Markdown rendering** — assistant responses rendered as Markdown
 - **Settings panel** — model, temperature, max context, streaming toggle
+- **Tool calling** — AIFunction tools execute automatically, incl. MCP servers via Moka.AI.Mcp
+- **History trimming** — long conversations stay within `MaxHistoryChars`
 - **Theming** — light, dark, and auto modes via CSS variables
 - **Pluggable providers** — OpenAI-compatible, Ollama, ONNX Runtime, or custom `IChatClient`
 - **Multi-target** — .NET 9 and .NET 10
@@ -53,6 +55,7 @@ Add the component:
 |---------|-------------|
 | [Moka.AI](https://www.nuget.org/packages/Moka.AI) | Core AI chat services — UI-free, works in any .NET app (console, desktop, services) |
 | [Moka.AI.Onnx](https://www.nuget.org/packages/Moka.AI.Onnx) | ONNX Runtime GenAI provider for embedded/offline models |
+| [Moka.AI.Mcp](https://www.nuget.org/packages/Moka.AI.Mcp) | Model Context Protocol client — expose MCP server tools to the AI |
 | [Moka.Blazor.Json.AI](https://www.nuget.org/packages/Moka.Blazor.Json.AI) | JSON-specific AI panel for the Moka.Blazor.Json viewer |
 
 ## Documentation

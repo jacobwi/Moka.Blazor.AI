@@ -7,9 +7,11 @@ site:
 content:
   docs: ./docs
   projects:
-    - path: ./src/Moka.Blazor.AI/Moka.Blazor.AI.csproj
+    - path: ./src/Moka.AI/Moka.AI.csproj
       label: Core Library
-    - path: ./src/Moka.Blazor.AI.Onnx/Moka.Blazor.AI.Onnx.csproj
+    - path: ./src/Moka.Blazor.AI/Moka.Blazor.AI.csproj
+      label: Blazor Components
+    - path: ./src/Moka.AI.Onnx/Moka.AI.Onnx.csproj
       label: ONNX Provider
 
 nav:

@@ -1,9 +1,9 @@
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Options;
-using Moka.Blazor.AI.Models;
+using Moka.AI.Models;
 
-namespace Moka.Blazor.AI.Services;
+namespace Moka.AI.Services;
 
 /// <summary>
 ///     Generic AI chat service that wraps an <see cref="IChatClient" /> for streaming
@@ -16,12 +16,17 @@ public sealed class AiChatService(
 	IAiContextBuilder? contextBuilder = null)
 {
 	/// <summary>
-	///     The current AI options configuration.
+	///     The current AI options. This is a per-instance snapshot of the configured
+	///     <see cref="AiChatOptions" /> — runtime changes made via the <c>Set*</c> methods
+	///     affect only this service instance (and therefore only the current scope),
+	///     never other scopes or users.
 	/// </summary>
-	public AiChatOptions Options { get; } = options.Value;
+	public AiChatOptions Options { get; } = Snapshot(options.Value);
 
 	/// <summary>
-	///     Change the model at runtime. Takes effect on the next request.
+	///     Change the model at runtime. Takes effect on the next request — the model id
+	///     is sent with every request, so this works even for clients whose chat client
+	///     was created with a different default model.
 	/// </summary>
 	public void SetModel(string modelName) => Options.DefaultModel = modelName;
 
@@ -51,7 +56,11 @@ public sealed class AiChatService(
 	{
 		List<ChatMessage> messages = BuildMessages(userMessage, systemPrompt, history);
 
-		var options = new ChatOptions { Temperature = Options.Temperature };
+		var options = new ChatOptions
+		{
+			Temperature = Options.Temperature,
+			ModelId = Options.DefaultModel
+		};
 
 		ChatResponse response = await chatClient.GetResponseAsync(
 			messages,
@@ -72,7 +81,11 @@ public sealed class AiChatService(
 	{
 		List<ChatMessage> messages = BuildMessages(userMessage, systemPrompt, history);
 
-		var options = new ChatOptions { Temperature = Options.Temperature };
+		var options = new ChatOptions
+		{
+			Temperature = Options.Temperature,
+			ModelId = Options.DefaultModel
+		};
 
 		await foreach (ChatResponseUpdate update in chatClient.GetStreamingResponseAsync(
 			               messages, options, cancellationToken))
@@ -110,6 +123,18 @@ public sealed class AiChatService(
 	///     Returns empty string if no context builder is registered.
 	/// </summary>
 	public string BuildContext() => contextBuilder?.BuildContext(Options) ?? "";
+
+	private static AiChatOptions Snapshot(AiChatOptions source) => new()
+	{
+		Provider = source.Provider,
+		Endpoint = source.Endpoint,
+		ApiKey = source.ApiKey,
+		DefaultModel = source.DefaultModel,
+		SystemPrompt = source.SystemPrompt,
+		MaxContextChars = source.MaxContextChars,
+		StreamResponses = source.StreamResponses,
+		Temperature = source.Temperature
+	};
 
 	private List<ChatMessage> BuildMessages(
 		string userMessage,

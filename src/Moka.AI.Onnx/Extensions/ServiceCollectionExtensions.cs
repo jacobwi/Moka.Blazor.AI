@@ -1,15 +1,15 @@
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ML.OnnxRuntimeGenAI;
-using Moka.Blazor.AI.Extensions;
-using Moka.Blazor.AI.Models;
+using Moka.AI.Extensions;
+using Moka.AI.Models;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
 
-namespace Moka.Blazor.AI.Onnx.Extensions;
+namespace Moka.AI.Onnx.Extensions;
 
 /// <summary>
-///     Extension methods for registering the ONNX Runtime GenAI provider with Moka.Blazor.AI.
+///     Extension methods for registering the ONNX Runtime GenAI provider with Moka.AI.
 /// </summary>
 public static class ServiceCollectionExtensions
 {

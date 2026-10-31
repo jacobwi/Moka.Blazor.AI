@@ -1,4 +1,4 @@
-namespace Moka.Blazor.AI.Models;
+namespace Moka.AI.Models;
 
 /// <summary>
 ///     Represents a named scope entry for focused context building.

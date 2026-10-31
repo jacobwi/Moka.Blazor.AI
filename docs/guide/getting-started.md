@@ -6,14 +6,22 @@ title: Getting Started
 
 ## Installation
 
+For Blazor apps (components + services):
+
 ```bash
 dotnet add package Moka.Blazor.AI
+```
+
+For non-Blazor apps (console, desktop, mobile, web services — services only):
+
+```bash
+dotnet add package Moka.AI
 ```
 
 For embedded ONNX models (no external server):
 
 ```bash
-dotnet add package Moka.Blazor.AI.Onnx
+dotnet add package Moka.AI.Onnx
 ```
 
 ## Service Registration
@@ -21,8 +29,8 @@ dotnet add package Moka.Blazor.AI.Onnx
 Register the AI services in `Program.cs`:
 
 ```csharp
-using Moka.Blazor.AI.Extensions;
-using Moka.Blazor.AI.Models;
+using Moka.AI.Extensions;
+using Moka.AI.Models;
 
 builder.Services.AddMokaAi(options =>
 {

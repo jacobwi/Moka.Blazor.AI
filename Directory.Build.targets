@@ -1,11 +1,11 @@
 <Project>
 	<!-- NuGet package metadata shared by all packable projects (evaluated AFTER csproj so IsPackable is available) -->
 	<PropertyGroup Condition="'$(IsPackable)' == 'true'">
-		<Version>0.2.0</Version>
-		<Authors>jacobwi, BCat, Moka</Authors>
-		<Copyright>Copyright (c) Moka 2026</Copyright>
-		<Company>Moka</Company>
-		<Product>Moka.Blazor.AI</Product>
+    <Version>0.3.0</Version>
+    <Authors>jacobwi, BCat, Moka</Authors>
+    <Copyright>Copyright (c) Moka 2026</Copyright>
+    <Company>Moka</Company>
+    <Product>Moka AI</Product>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/jacobwi/Moka.Blazor.AI</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/jacobwi/Moka.Blazor.AI</RepositoryUrl>

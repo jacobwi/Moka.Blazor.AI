@@ -1,4 +1,4 @@
-namespace Moka.Blazor.AI.Models;
+namespace Moka.AI.Models;
 
 /// <summary>
 ///     Configuration options for the AI chat service.
@@ -10,6 +10,13 @@ public sealed class AiChatOptions
 
 	/// <summary>API endpoint URL. When <c>null</c>, uses the provider default.</summary>
 	public string? Endpoint { get; set; }
+
+	/// <summary>
+	///     API key for the provider. When <c>null</c>, uses the placeholder <c>"lm-studio"</c>
+	///     (accepted by LM Studio and other key-less local servers). Set this for providers
+	///     that require authentication (OpenAI, vLLM with auth, etc.).
+	/// </summary>
+	public string? ApiKey { get; set; }
 
 	/// <summary>Model name (e.g., "qwen2.5-3b", "llama3.2", "phi-3.5-mini").</summary>
 	public string? DefaultModel { get; set; } = "local-model";
@@ -46,6 +53,6 @@ public enum AiProvider
 	/// <summary>Ollama native API.</summary>
 	Ollama,
 
-	/// <summary>Embedded ONNX Runtime GenAI (requires Moka.Blazor.AI.Onnx package).</summary>
+	/// <summary>Embedded ONNX Runtime GenAI (requires Moka.AI.Onnx package).</summary>
 	Onnx
 }

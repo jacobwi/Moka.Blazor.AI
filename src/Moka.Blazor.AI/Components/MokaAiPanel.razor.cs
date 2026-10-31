@@ -4,8 +4,9 @@ using Markdig;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using Moka.AI.Models;
+using Moka.AI.Services;
 using Moka.Blazor.AI.Models;
-using Moka.Blazor.AI.Services;
 
 namespace Moka.Blazor.AI.Components;
 

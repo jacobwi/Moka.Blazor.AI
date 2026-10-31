@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.3.0] - 2026-10-30
+
+### 💥 Breaking Changes
+- **New package: `Moka.AI`** — the UI-free chat engine (`AiChatService`, `IAiContextBuilder`, `AiMessage`, `AiChatOptions`, `AddMokaAi()`) extracted from `Moka.Blazor.AI` into its own package with no Blazor or ASP.NET dependency. Types moved from `Moka.Blazor.AI.Models/Services/Extensions` to `Moka.AI.Models/Services/Extensions` — update your `using` directives. `Moka.Blazor.AI` still carries the components and depends on `Moka.AI`
+- **Renamed package: `Moka.AI.Onnx`** (was `Moka.Blazor.AI.Onnx`) — the ONNX Runtime GenAI provider now references only `Moka.AI`; namespaces moved from `Moka.Blazor.AI.Onnx.*` to `Moka.AI.Onnx.*`
+
+### ✨ New
+- **Headless usage** — console, desktop, mobile, and service apps can now use the AI chat services without any Blazor dependency (see `samples/Moka.AI.ConsoleDemo`)
+- **`ApiKey` option** — `AiChatOptions.ApiKey` for providers that require authentication (previously hardcoded to the `"lm-studio"` placeholder, which broke real OpenAI/vLLM endpoints)
+
+### 🐛 Fixed
+- **Runtime settings no longer leak across scopes** — `AiChatService` now snapshots its options per instance, so `SetModel`/`SetTemperature`/… in one Blazor circuit (or DI scope) no longer mutate the global options seen by every other user
+- **`SetModel()` now takes effect** — the model id is sent with every request, so runtime model changes work even for OpenAI-compatible clients whose underlying chat client was created with a different default model
+
+### 🔧 Changed
+- `Moka.Blazor.AI` package now depends on `Moka.AI` (transitively provides the provider packages)
+
 ## [0.2.0] - 2026-10-03
 
 ### 📦 Dependencies
@@ -35,5 +52,6 @@
 - Registers `OnnxRuntimeGenAIChatClient` as `IChatClient` — no external server required
 - Hardware acceleration options: CPU, CUDA, DirectML
 
+[0.3.0]: https://github.com/jacobwi/Moka.Blazor.AI/releases/tag/v0.3.0
 [0.2.0]: https://github.com/jacobwi/Moka.Blazor.AI/releases/tag/v0.2.0
 [0.1.0]: https://github.com/jacobwi/Moka.Blazor.AI/releases/tag/v0.1.0

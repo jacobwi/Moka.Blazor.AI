@@ -1,6 +1,6 @@
-using Moka.Blazor.AI.Models;
+using Moka.AI.Models;
 
-namespace Moka.Blazor.AI.Services;
+namespace Moka.AI.Services;
 
 /// <summary>
 ///     Provides domain-specific context for the AI assistant.

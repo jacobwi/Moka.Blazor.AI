@@ -2,17 +2,17 @@ using System.ClientModel;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Moka.Blazor.AI.Models;
-using Moka.Blazor.AI.Services;
+using Moka.AI.Models;
+using Moka.AI.Services;
 using OllamaSharp;
 using OpenAI;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
 
-namespace Moka.Blazor.AI.Extensions;
+namespace Moka.AI.Extensions;
 
 /// <summary>
-///     Extension methods for registering Moka.Blazor.AI services.
+///     Extension methods for registering Moka.AI services.
 /// </summary>
 public static class ServiceCollectionExtensions
 {
@@ -73,7 +73,7 @@ public static class ServiceCollectionExtensions
 
 			default: // OpenAI-compatible (LM Studio, vLLM, etc.)
 				services.TryAddSingleton<IChatClient>(_ => new OpenAIClient(
-						new ApiKeyCredential("lm-studio"),
+						new ApiKeyCredential(options.ApiKey ?? "lm-studio"),
 						new OpenAIClientOptions { Endpoint = new Uri(options.ResolvedEndpoint) })
 					.GetChatClient(options.DefaultModel ?? "local-model")
 					.AsIChatClient());

@@ -32,13 +32,18 @@ A reusable Blazor AI chat panel component with streaming responses, editable mes
 
 | Package | Description |
 |---------|-------------|
-| [Moka.Blazor.AI](https://www.nuget.org/packages/Moka.Blazor.AI) | Core chat panel component and services |
-| [Moka.Blazor.AI.Onnx](https://www.nuget.org/packages/Moka.Blazor.AI.Onnx) | ONNX Runtime GenAI provider for embedded/offline models |
+| [Moka.AI](https://www.nuget.org/packages/Moka.AI) | Core AI chat services — UI-free, works in any .NET app |
+| [Moka.Blazor.AI](https://www.nuget.org/packages/Moka.Blazor.AI) | Blazor chat panel component (built on Moka.AI) |
+| [Moka.AI.Onnx](https://www.nuget.org/packages/Moka.AI.Onnx) | ONNX Runtime GenAI provider for embedded/offline models |
 
 ## Installation
 
 ```bash
+# Blazor apps — components + services
 dotnet add package Moka.Blazor.AI
+
+# Any other .NET app — console, desktop, mobile, web services
+dotnet add package Moka.AI
 ```
 
 ## Quick Start
@@ -47,6 +52,9 @@ dotnet add package Moka.Blazor.AI
 
 ```csharp
 // Program.cs
+using Moka.AI.Extensions;
+using Moka.AI.Models;
+
 builder.Services.AddMokaAi(options =>
 {
     options.Provider = AiProvider.OpenAiCompatible;
@@ -89,7 +97,7 @@ builder.Services.AddMokaAi(options =>
 **ONNX Runtime (embedded, no server):**
 
 ```bash
-dotnet add package Moka.Blazor.AI.Onnx
+dotnet add package Moka.AI.Onnx
 ```
 
 ```csharp
@@ -101,6 +109,37 @@ builder.Services.AddMokaAiOnnx(@"C:\models\phi-3-mini-onnx");
 ```csharp
 builder.Services.AddMokaAi(myCustomChatClient);
 ```
+
+## Using Without Blazor
+
+The chat engine lives in **Moka.AI** and has no Blazor or ASP.NET dependency. Console, WPF, MAUI, and backend service apps can stream AI responses with plain `Microsoft.Extensions.DependencyInjection`:
+
+```csharp
+using Microsoft.Extensions.DependencyInjection;
+using Moka.AI.Extensions;
+using Moka.AI.Models;
+using Moka.AI.Services;
+
+var services = new ServiceCollection();
+services.AddMokaAi(options =>
+{
+    options.Provider = AiProvider.Ollama;
+    options.DefaultModel = "llama3.2";
+});
+
+await using var provider = services.BuildServiceProvider();
+var chat = provider.GetRequiredService<AiChatService>();
+
+await foreach (string token in chat.StreamAsync(
+                   "Summarize the build logs.",
+                   "You are a terse build analyst.",
+                   history: []))
+{
+    Console.Write(token);
+}
+```
+
+A runnable version lives in [`samples/Moka.AI.ConsoleDemo`](samples/Moka.AI.ConsoleDemo).
 
 ## Parameters
 
@@ -177,15 +216,19 @@ Override CSS variables for custom themes:
 
 ```
 src/
-  Moka.Blazor.AI/              # Core library (NuGet package)
-    Components/                 # MokaAiPanel, MokaAiSettingsPanel
+  Moka.AI/                     # Core AI chat services (NuGet package, no UI deps)
     Services/                   # AiChatService, IAiContextBuilder
-    Models/                     # AiMessage, AiChatOptions, AiQuickAction, ChatStyle
+    Models/                     # AiMessage, AiChatOptions, AiQuickAction, AiContextScope
     Extensions/                 # AddMokaAi() DI registration
+  Moka.Blazor.AI/              # Blazor UI (NuGet package, depends on Moka.AI)
+    Components/                 # MokaAiPanel, MokaAiSettingsPanel
+    Models/                     # ChatStyle
     wwwroot/css/                # moka-ai.css (theming via CSS variables)
-  Moka.Blazor.AI.Onnx/         # ONNX Runtime GenAI provider
+  Moka.AI.Onnx/                # ONNX Runtime GenAI provider (depends on Moka.AI)
     Extensions/                 # AddMokaAiOnnx() DI registration
     Models/                     # OnnxAiOptions
+samples/
+  Moka.AI.ConsoleDemo/         # Console app demonstrating headless usage
 docs/                           # MokaDocs documentation site
 ```
 

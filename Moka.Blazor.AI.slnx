@@ -20,7 +20,11 @@
     <File Path="docs/guide/extending.md" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src/Moka.Blazor.AI.Onnx/Moka.Blazor.AI.Onnx.csproj" />
+    <Project Path="src/Moka.AI.Onnx/Moka.AI.Onnx.csproj" />
+    <Project Path="src/Moka.AI/Moka.AI.csproj" />
     <Project Path="src/Moka.Blazor.AI/Moka.Blazor.AI.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/Moka.AI.ConsoleDemo/Moka.AI.ConsoleDemo.csproj" />
   </Folder>
 </Solution>

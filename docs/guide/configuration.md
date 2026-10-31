@@ -24,7 +24,8 @@ builder.Services.AddMokaAi(options =>
 |--------|------|---------|-------------|
 | `Provider` | `AiProvider` | `OpenAiCompatible` | AI provider type |
 | `Endpoint` | `string?` | `null` | Provider endpoint URL (uses provider default if null) |
-| `DefaultModel` | `string?` | `null` | Model name to use |
+| `ApiKey` | `string?` | `null` | API key (defaults to the `"lm-studio"` placeholder — set for providers that require auth) |
+| `DefaultModel` | `string?` | `"local-model"` | Model name to use |
 | `Temperature` | `float` | `0.3` | Response randomness (0.0 = deterministic, 1.0 = creative) |
 | `MaxContextChars` | `int` | `8000` | Maximum characters included as context |
 | `StreamResponses` | `bool` | `true` | Enable token-by-token streaming |
@@ -36,14 +37,14 @@ builder.Services.AddMokaAi(options =>
 |----------|-----------------|-------------|
 | `OpenAiCompatible` | `http://localhost:1234/v1` | LM Studio, vLLM, text-generation-webui, or any OpenAI-compatible API |
 | `Ollama` | `http://localhost:11434` | Ollama native API |
-| `Onnx` | N/A (in-process) | ONNX Runtime GenAI — requires `Moka.Blazor.AI.Onnx` package |
+| `Onnx` | N/A (in-process) | ONNX Runtime GenAI — requires `Moka.AI.Onnx` package |
 
 ## Quick Actions
 
 Add custom quick action buttons to the panel:
 
 ```razor
-@using Moka.Blazor.AI.Models
+@using Moka.AI.Models
 
 <MokaAiPanel QuickActions="_quickActions" />
 

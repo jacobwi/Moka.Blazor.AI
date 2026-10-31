@@ -51,7 +51,8 @@ Add the component:
 
 | Package | Description |
 |---------|-------------|
-| [Moka.Blazor.AI.Onnx](https://www.nuget.org/packages/Moka.Blazor.AI.Onnx) | ONNX Runtime GenAI provider for embedded/offline models |
+| [Moka.AI](https://www.nuget.org/packages/Moka.AI) | Core AI chat services — UI-free, works in any .NET app (console, desktop, services) |
+| [Moka.AI.Onnx](https://www.nuget.org/packages/Moka.AI.Onnx) | ONNX Runtime GenAI provider for embedded/offline models |
 | [Moka.Blazor.Json.AI](https://www.nuget.org/packages/Moka.Blazor.Json.AI) | JSON-specific AI panel for the Moka.Blazor.Json viewer |
 
 ## Documentation

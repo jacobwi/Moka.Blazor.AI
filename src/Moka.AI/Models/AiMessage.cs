@@ -1,4 +1,4 @@
-namespace Moka.Blazor.AI.Models;
+namespace Moka.AI.Models;
 
 /// <summary>
 ///     A single message in an AI conversation.

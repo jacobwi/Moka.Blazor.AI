@@ -44,8 +44,9 @@ builder.Services.AddMokaAi(options =>
 
 | Package | Description |
 |---------|-------------|
-| [Moka.Blazor.AI](https://www.nuget.org/packages/Moka.Blazor.AI) | Core chat panel component and services |
-| [Moka.Blazor.AI.Onnx](https://www.nuget.org/packages/Moka.Blazor.AI.Onnx) | ONNX Runtime GenAI provider for embedded/offline models |
+| [Moka.AI](https://www.nuget.org/packages/Moka.AI) | Core AI chat services — UI-free, works in any .NET app |
+| [Moka.Blazor.AI](https://www.nuget.org/packages/Moka.Blazor.AI) | Blazor chat panel component (built on Moka.AI) |
+| [Moka.AI.Onnx](https://www.nuget.org/packages/Moka.AI.Onnx) | ONNX Runtime GenAI provider for embedded/offline models |
 
 ## Next Steps
 

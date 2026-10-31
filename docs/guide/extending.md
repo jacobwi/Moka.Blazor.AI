@@ -19,8 +19,8 @@ The extension pattern has three layers:
 The context builder extracts relevant data from your domain and includes it in every AI prompt. The AI model receives this context alongside the user's question.
 
 ```csharp
-using Moka.Blazor.AI.Models;
-using Moka.Blazor.AI.Services;
+using Moka.AI.Models;
+using Moka.AI.Services;
 
 namespace MyApp.AI.Services;
 
@@ -83,7 +83,7 @@ Use **composition** (not inheritance) to wrap `MokaAiPanel`. Hold a `@ref` to th
 ```csharp
 using Microsoft.AspNetCore.Components;
 using Moka.Blazor.AI.Components;
-using Moka.Blazor.AI.Models;
+using Moka.AI.Models;
 using MyApp.AI.Services;
 
 namespace MyApp.AI.Components;
@@ -143,14 +143,14 @@ public sealed partial class MyAiPanel : ComponentBase
 
 ## Step 3: Register Services
 
-Create an extension method that calls `AddMokaAi()` from the base library, then registers your domain-specific services:
+Create an extension method that calls `AddMokaAi()` from the **Moka.AI** core library, then registers your domain-specific services:
 
 ```csharp
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Moka.Blazor.AI.Extensions;
-using Moka.Blazor.AI.Models;
-using Moka.Blazor.AI.Services;
+using Moka.AI.Extensions;
+using Moka.AI.Models;
+using Moka.AI.Services;
 using MyApp.AI.Services;
 
 namespace MyApp.AI.Extensions;

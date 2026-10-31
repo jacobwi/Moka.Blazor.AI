@@ -1,4 +1,4 @@
-namespace Moka.Blazor.AI.Onnx.Models;
+namespace Moka.AI.Onnx.Models;
 
 /// <summary>
 ///     Configuration options for the ONNX Runtime GenAI provider.

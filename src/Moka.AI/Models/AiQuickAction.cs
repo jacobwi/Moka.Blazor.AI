@@ -1,4 +1,4 @@
-namespace Moka.Blazor.AI.Models;
+namespace Moka.AI.Models;
 
 /// <summary>
 ///     A configurable quick action button for the AI chat panel.

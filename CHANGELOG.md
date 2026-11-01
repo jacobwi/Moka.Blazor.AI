@@ -10,6 +10,15 @@
   - `AddMokaAiMcpServer()` DI registration
 - New "Hosting an MCP Server" guide
 
+### 📦 Dependencies
+| Package | From | To |
+|---|---|---|
+| Markdig | 1.4.0 | 1.5.1 |
+| Microsoft.Extensions.AI | 10.10.0 | 10.11.0 |
+| Microsoft.Extensions.AI.Abstractions | 10.10.1 | 10.11.0 |
+| Microsoft.Extensions.AI.OpenAI | 10.10.1 | 10.11.0 |
+| Microsoft.ML.OnnxRuntimeGenAI (Moka.AI.Onnx) | 0.17.1 | 0.18.0 |
+
 ## [0.5.0] - 2026-10-31
 
 ### ✨ New

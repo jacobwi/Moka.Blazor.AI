@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.6.0] - 2026-11-01
+
+### ✨ New
+- **New package: `Moka.AI.McpServer`** — host an MCP server that exposes the tools registered in `AiChatOptions.Tools` to external MCP clients (Claude Desktop, editors, other AI apps). Tools are defined once and shared by the built-in chat pipeline and MCP clients:
+  - `McpServerTools.FromAiOptions(options)` converts registered `AIFunction` tools to `McpServerTool`s (the SDK's own conversion; non-function `AITool`s are skipped)
+  - `MokaAiMcpServer.RunStdioAsync()` runs the server over stdio — the process mode Claude Desktop launches
+  - `MokaAiMcpServer.BuildServerOptions()` builds `McpServerOptions` with all tools attached, for use with any official transport incl. ASP.NET Core HTTP hosting (`AddMcpServer().WithTools(...)` + `MapMcp()`)
+  - `AddMokaAiMcpServer()` DI registration
+- New "Hosting an MCP Server" guide
+
 ## [0.5.0] - 2026-10-31
 
 ### ✨ New
@@ -69,6 +79,7 @@
 - Registers `OnnxRuntimeGenAIChatClient` as `IChatClient` — no external server required
 - Hardware acceleration options: CPU, CUDA, DirectML
 
+[0.6.0]: https://github.com/jacobwi/Moka.Blazor.AI/releases/tag/v0.6.0
 [0.5.0]: https://github.com/jacobwi/Moka.Blazor.AI/releases/tag/v0.5.0
 [0.4.0]: https://github.com/jacobwi/Moka.Blazor.AI/releases/tag/v0.4.0
 [0.3.0]: https://github.com/jacobwi/Moka.Blazor.AI/releases/tag/v0.3.0

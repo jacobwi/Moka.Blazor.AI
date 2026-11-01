@@ -37,6 +37,7 @@ A reusable Blazor AI chat panel component with streaming responses, editable mes
 | [Moka.Blazor.AI](https://www.nuget.org/packages/Moka.Blazor.AI) | Blazor chat panel component (built on Moka.AI) |
 | [Moka.AI.Onnx](https://www.nuget.org/packages/Moka.AI.Onnx) | ONNX Runtime GenAI provider for embedded/offline models |
 | [Moka.AI.Mcp](https://www.nuget.org/packages/Moka.AI.Mcp) | Model Context Protocol client — expose MCP server tools to the AI |
+| [Moka.AI.McpServer](https://www.nuget.org/packages/Moka.AI.McpServer) | Host an MCP server — your tools exposed to Claude Desktop, editors, other AI apps |
 
 ## Installation
 
@@ -266,6 +267,10 @@ src/
     MokaAiMcpClient.cs          # Connect servers, register tools
     Extensions/                 # AddMokaAiMcp() DI registration
     Models/                     # MokaAiMcpOptions, McpServerDefinition
+  Moka.AI.McpServer/           # MCP server host (depends on Moka.AI)
+    MokaAiMcpServer.cs          # RunStdioAsync + BuildServerOptions
+    McpServerTools.cs           # AIFunction -> McpServerTool conversion
+    Extensions/                 # AddMokaAiMcpServer() DI registration
 samples/
   Moka.AI.ConsoleDemo/         # Console app demonstrating headless usage
 docs/                           # MokaDocs documentation site

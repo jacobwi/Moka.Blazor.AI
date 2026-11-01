@@ -56,6 +56,7 @@ Add the component:
 | [Moka.AI](https://www.nuget.org/packages/Moka.AI) | Core AI chat services — UI-free, works in any .NET app (console, desktop, services) |
 | [Moka.AI.Onnx](https://www.nuget.org/packages/Moka.AI.Onnx) | ONNX Runtime GenAI provider for embedded/offline models |
 | [Moka.AI.Mcp](https://www.nuget.org/packages/Moka.AI.Mcp) | Model Context Protocol client — expose MCP server tools to the AI |
+| [Moka.AI.McpServer](https://www.nuget.org/packages/Moka.AI.McpServer) | Host an MCP server — your tools exposed to external AI clients |
 | [Moka.Blazor.Json.AI](https://www.nuget.org/packages/Moka.Blazor.Json.AI) | JSON-specific AI panel for the Moka.Blazor.Json viewer |
 
 ## Documentation

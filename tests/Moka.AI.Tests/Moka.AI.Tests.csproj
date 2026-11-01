@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Moka.AI\Moka.AI.csproj" />
     <ProjectReference Include="..\..\src\Moka.AI.Mcp\Moka.AI.Mcp.csproj" />
+    <ProjectReference Include="..\..\src\Moka.AI.McpServer\Moka.AI.McpServer.csproj" />
   </ItemGroup>
 
 </Project>
